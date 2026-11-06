@@ -8,7 +8,7 @@ echo "case $ID"
 curl -sf -X POST $B/api/cases/$ID/messages -H 'Content-Type: application/json' \
   -d '{"text":"Hola, soy Mariana. Fui maestra de primaria, de segundo a quinto, en Guadalajara, México, diez años. Tengo mi cédula profesional. Ahora vivo en San José. Mandé la solicitud a la CTC y me regresaron una carta que no entiendo bien."}' \
   | j 'JSON.stringify({done:j.done,missing:j.missing,route:j.routing.kind,office:j.header&&j.header.office&&j.header.office.name})'
-for f in 06-ctc-letter-returned.pdf 05-evaluation-report-general.pdf 01-certificado-estudios.jpg 02-titulo.pdf 03-cedula-profesional.jpg 04-constancia-servicio.pdf; do
+for f in 06-ctc-letter-returned.jpg 05-evaluation-report-general.pdf 01-certificado-estudios.pdf 02-titulo.pdf 03-cedula-profesional.jpg 04-constancia-servicio.pdf; do
   mime=application/pdf; [[ $f == *.jpg ]] && mime=image/jpeg
   curl -s -X POST $B/api/cases/$ID/documents -F "file=@fixtures/mariana/$f;type=$mime" | j '(j.document ? j.document.kind+" "+j.document.status+" facts="+j.document.facts.length : j.error_key)'
 done
