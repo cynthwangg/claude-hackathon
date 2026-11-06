@@ -1,0 +1,20 @@
+.quiet:global(.state) { color: var(--muted); font-size: 14px; }
+.quiet:global(.state):not(:global(.plain)):hover { color: var(--ink); }
+
+.entry { padding: 14px 0 16px; border-top: 1px solid var(--rule); }
+.entry:first-of-type { border-top: 0; padding-top: 4px; }
+.num { display: block; margin-bottom: 4px; }
+.quote { margin: 0; }
+
+.found { display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: start; margin: 14px 0 12px; padding: 2px 0 2px 16px; border-left: 1px solid var(--rule); }
+.found .lines > div { margin-top: 4px; }
+.thumb { display: block; width: 84px; }
+.thumb img { display: block; width: 100%; border: 1px solid var(--rule); box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08); background: #fff; }
+
+.plain { margin: 0 0 8px; }
+.stateLine { margin-top: 6px; }
+
+.laterHead { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.laterHead h2 { margin: 0; }
+.toggle { font-family: var(--font-sans); font-size: 14px; white-space: nowrap; }
+.laterBody { margin-top: 10px; }

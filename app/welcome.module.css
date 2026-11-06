@@ -1,0 +1,8 @@
+.top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 8px 18px; padding: 14px 0 12px; border-bottom: 1px solid var(--rule); }
+.brand { font-size: 18px; }
+.langs { display: flex; flex-wrap: wrap; gap: 4px 18px; }
+.langs .lang { font-family: var(--font-sans); font-size: 15px; }
+.langs .lang[aria-pressed="true"] { color: var(--ink); text-decoration: none; }
+.title { margin-top: 36px; }
+.action { margin-top: 24px; }
+.depth { margin-top: 28px; }

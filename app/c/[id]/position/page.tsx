@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { api, errorKey } from "@/components/api";
+import { LetterBlock, type LetterItem } from "@/components/position/LetterBlock";
+import s from "@/components/position/position.module.css";
 import { ErrorLine, Loading, Shell } from "@/components/Shell";
 import type { Header, Line } from "@/components/types";
 import { WhyDrawer } from "@/components/WhyDrawer";
@@ -17,16 +19,31 @@ type Position = {
   needed: Line[];
   unknown: Line[];
   later: { rule_id: string; text: string }[];
-  letter: { number: number; text: string; rule_id: string | null; paperwork: boolean; named: string[] }[];
+  letter: LetterItem[];
+  transcript_document_id: string | null;
   next: { kind: string; text: string };
 };
 type Resp = { header: Header; position: Position };
 
-/** 6.4. What she already has first, then what is still needed, then what nobody can tell yet. No numbers. */
+function StateWord({ word, onClick }: { word: string; onClick: () => void }) {
+  return <button className={`state ${s.quiet}`} onClick={onClick} aria-haspopup="dialog">{word}</button>;
+}
+
+function Row({ l, onWhy }: { l: Line; onWhy: (id: string) => void }) {
+  return (
+    <div className="item">
+      <span>{l.text}</span>
+      <StateWord word={l.state_word} onClick={() => onWhy(l.rule_id)} />
+    </div>
+  );
+}
+
+/** 6.4. What she already has first, then the letter, then what is still needed and what nobody can tell yet. No numbers. */
 export default function PositionPage() {
   const { id } = useParams<{ id: string }>();
   const [data, setData] = useState<Resp | null>(null);
   const [why, setWhy] = useState<string | null>(null);
+  const [laterOpen, setLaterOpen] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
   const load = useCallback(() => api<Resp>(`/api/cases/${id}/position`).then(setData).catch((e) => setErr(errorKey(e))), [id]);
@@ -38,12 +55,7 @@ export default function PositionPage() {
 
   if (header.route_kind === "none") return <General id={id} header={header} p={p} />;
 
-  const Row = ({ l }: { l: Line }) => (
-    <div className="item">
-      <span>{l.text}</span>
-      <button className="state" onClick={() => setWhy(l.rule_id)} aria-haspopup="dialog">{l.state_word}</button>
-    </div>
-  );
+  const hasLetter = p.letter.length > 0;
 
   return (
     <Shell id={id} lang={lang} name={header.name} active="position" routeKind={header.route_kind} mock={header.mock}>
@@ -51,64 +63,56 @@ export default function PositionPage() {
       <p className="small muted">{t(lang, "position.ctc_intro")}</p>
       {header.route_kind === "near" && <p className="small">{t(lang, "position.near_note")}</p>}
 
-      {p.letter.length > 0 && (
-        <section className="section first">
-          <h2>{t(lang, "position.letter_items")}</h2>
-          {p.letter.map((it) => (
-            <div key={it.number} className="item small" style={{ display: "block" }}>
-              <div lang="en"><span className="muted">{it.number} · </span><span className="quote">“{it.text}”</span></div>
-              {it.paperwork && (
-                <div style={{ marginTop: 6 }}>
-                  {t(lang, "position.letter_paperwork")}{" "}
-                  {it.named.length > 0 && <span><span className="muted">{t(lang, "label.transcript.practicum_courses")} · </span>{it.named.map((n, i) => <span key={n}>{i > 0 && (i === it.named.length - 1 ? t(lang, "join.and") : ", ")}<span className="mark">{n}</span></span>)}</span>}{" "}
-                  <button className="state" onClick={() => setWhy("R05")} aria-haspopup="dialog">{t(lang, "why.title")}</button>
-                </div>
-              )}
-              {!it.rule_id && <div className="micro">{t(lang, "position.letter_unmatched")}</div>}
-            </div>
-          ))}
-        </section>
-      )}
-
-      <section className={`section ${p.letter.length ? "" : "first"}`}>
+      <section className="section">
         <h2>{t(lang, "position.have")}</h2>
         {p.doc_count === 0 && p.have.length === 0 ? <p className="muted">{t(lang, "position.nothing_yet")}</p> : null}
-        {p.have.map((l) => <Row key={l.rule_id} l={l} />)}
+        {p.have.map((l) => <Row key={l.rule_id} l={l} onWhy={setWhy} />)}
         {p.extra_have.map((x) => (
           <div key={x.text} className="item">
             <span>{x.text}{x.note && <><br /><span className="small muted">{x.note}</span></>}</span>
-            {x.rule_id ? <button className="state" onClick={() => setWhy(x.rule_id)} aria-haspopup="dialog">{x.state_word}</button> : <span className="sans">{x.state_word}</span>}
+            {x.rule_id ? <StateWord word={x.state_word} onClick={() => setWhy(x.rule_id)} /> : <span className={`state plain ${s.quiet}`}>{x.state_word}</span>}
           </div>
         ))}
       </section>
 
+      {hasLetter && <LetterBlock lang={lang} items={p.letter} lines={[...p.needed, ...p.unknown, ...p.have]} transcriptId={p.transcript_document_id} onWhy={setWhy} />}
+
       <section className="section">
         <h2>{t(lang, "position.needed")}</h2>
         {p.doc_count === 0 && <p className="small muted">{t(lang, "position.nothing_needed")}</p>}
-        {p.needed.map((l) => <Row key={l.rule_id} l={l} />)}
+        {p.needed.map((l) => <Row key={l.rule_id} l={l} onWhy={setWhy} />)}
       </section>
 
       {p.unknown.length > 0 && (
         <section className="section">
           <h2>{t(lang, "position.unknown")}</h2>
-          {p.unknown.map((l) => <Row key={l.rule_id} l={l} />)}
+          {p.unknown.map((l) => <Row key={l.rule_id} l={l} onWhy={setWhy} />)}
         </section>
       )}
 
-      <section className="section">
-        <details>
-          <summary><h2 style={{ display: "inline", margin: 0 }}>{t(lang, "position.later")} ({p.later.length})</h2></summary>
-          <p className="small" style={{ marginTop: 8 }}>{t(lang, "position.later_note")}</p>
-          {p.later.map((l) => (
-            <div key={l.rule_id} className="item small"><span>{l.text}</span><button className="state" onClick={() => setWhy(l.rule_id)} aria-haspopup="dialog">{t(lang, "state.later")}</button></div>
-          ))}
-        </details>
-      </section>
+      {p.later.length > 0 && (
+        <section className="section">
+          <div className={s.laterHead}>
+            <h2>{t(lang, "position.later")} ({p.later.length})</h2>
+            <button className={`link muted ${s.toggle}`} onClick={() => setLaterOpen((o) => !o)} aria-expanded={laterOpen} aria-controls="later-list">
+              {t(lang, laterOpen ? "position.later_hide" : "position.later_show")}
+            </button>
+          </div>
+          <div id="later-list" className={s.laterBody} hidden={!laterOpen}>
+            <p className="small">{t(lang, "position.later_note")}</p>
+            {p.later.map((l) => (
+              <div key={l.rule_id} className="item small">
+                <span>{l.text}</span>
+                <StateWord word={t(lang, "state.later")} onClick={() => setWhy(l.rule_id)} />
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
-      <section className="section first" style={{ marginTop: 12 }}>
-        <p className="micro" style={{ margin: 0 }}>{t(lang, "position.next")}</p>
-        <p>{p.next.text}</p>
-        <Link className="btn" href={`/c/${id}/week`}>{t(lang, "nav.week")}</Link>
+      <section className={`section ${hasLetter ? "" : "first"}`} style={{ marginTop: 12 }}>
+        <p className="micro">{t(lang, "position.next")}</p>
+        <Link className="btn" href={`/c/${id}/week`}>{p.next.text}</Link>
       </section>
 
       <WhyDrawer caseId={id} lang={lang} ruleId={why} onClose={() => setWhy(null)} />
@@ -143,8 +147,8 @@ function General({ id, header, p }: { id: string; header: Header; p: Position })
           <Link className="link" href={`/c/${id}/documents`}>{t(lang, "nav.documents")}</Link>
         </div>
       </section>
-      <section className="section first">
-        <p className="micro" style={{ margin: 0 }}>{t(lang, "office.question_title")}</p>
+      <section className="section">
+        <p className="micro">{t(lang, "office.question_title")}</p>
         <Link className="btn" href={`/c/${id}/letter/office_question`}>{t(lang, "week.see_letter")}</Link>
       </section>
     </Shell>

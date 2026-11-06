@@ -18,6 +18,7 @@ export default function LetterPage() {
   const [draft, setDraft] = useState<Draft | null>(null);
   const [body, setBody] = useState("");
   const [copied, setCopied] = useState(false);
+  const [editing, setEditing] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const store = `earned.letter.${id}.${kind}`;
 
@@ -45,30 +46,39 @@ export default function LetterPage() {
   };
   const mail = `mailto:?subject=${encodeURIComponent(draft.subject)}&body=${encodeURIComponent(body)}`;
 
+  const blanks = body.split(/(\[[^\]]+\])/g);
+
   return (
-    <Shell id={id} lang={lang} name={header.name} routeKind={header.route_kind} mock={header.mock} wide>
+    <Shell id={id} lang={lang} name={header.name} routeKind={header.route_kind} mock={header.mock}>
       <h1 className="noprint">{t(lang, TITLE[draft.kind])}</h1>
-      {draft.to && <p className="small noprint"><span className="muted">{draft.to}</span></p>}
+      {draft.to && <p className="small muted noprint">{draft.to}</p>}
       {body.includes("[") && <p className="small noprint">{t(lang, "letter.fill")}</p>}
-      <div className="lettergrid">
-        <div>
+
+      {editing ? (
+        <>
           <label className="sr" htmlFor="letter">{draft.subject}</label>
-          <textarea id="letter" className="letter noprint" lang={draft.language} value={body} onChange={(e) => { setBody(e.target.value); localStorage.setItem(store, e.target.value); }} style={{ minHeight: 420 }} />
-          <div className="letter print-only" lang={draft.language} aria-hidden="true" style={{ display: "none" }}>{body}</div>
+          <textarea id="letter" className="page" lang={draft.language} value={body} autoFocus onChange={(e) => { setBody(e.target.value); localStorage.setItem(store, e.target.value); }} />
+        </>
+      ) : (
+        <div className="page" lang={draft.language} data-testid="letter">
+          {blanks.map((part, i) => (part.startsWith("[") ? <span key={i} className="blank">{part}</span> : <span key={i}>{part}</span>))}
         </div>
-        {draft.aid && (
-          <div className="noprint">
-            <p className="micro">{t(lang, draft.aid_label ?? "letter.aid_same")}</p>
-            <div className="letter small" lang={lang} style={{ background: "transparent" }}>{draft.aid}</div>
-          </div>
-        )}
+      )}
+
+      <div className="row noprint" style={{ marginTop: 16 }}>
+        <a className="btn" href={mail}>{t(lang, "letter.email")}</a>
+        <button className="link sans" onClick={copy}>{copied ? t(lang, "letter.copied") : t(lang, "letter.copy")}</button>
+        <button className="link sans" onClick={() => window.print()}>{t(lang, "letter.print")}</button>
+        <button className="link sans muted" onClick={() => setEditing((e) => !e)}>{editing ? t(lang, "letter.done_editing") : t(lang, "letter.edit")}</button>
       </div>
-      <div className="row sans noprint">
-        <button className="link" onClick={copy}>{copied ? t(lang, "letter.copied") : t(lang, "letter.copy")}</button>
-        <button className="link" onClick={() => window.print()}>{t(lang, "letter.print")}</button>
-        <a className="link" href={mail}>{t(lang, "letter.email")}</a>
-      </div>
-      <p className="micro noprint" style={{ marginTop: 12 }}>{t(lang, "letter.nothing_sent")}</p>
+      <p className="micro noprint" style={{ marginTop: 10 }}>{t(lang, "letter.nothing_sent")}</p>
+
+      {draft.aid && (
+        <section className="section noprint" style={{ marginTop: 20 }}>
+          <p className="micro" style={{ marginBottom: 8 }}>{t(lang, draft.aid_label ?? "letter.aid_same")}</p>
+          <div className="aid" lang={lang}>{draft.aid}</div>
+        </section>
+      )}
     </Shell>
   );
 }

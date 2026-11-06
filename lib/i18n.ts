@@ -5,7 +5,7 @@ import type { Lang } from "@/rules/types";
 
 const TABLE: Record<Lang, Record<string, string>> = { en, es, zh };
 
-export const LANGS: Lang[] = ["es", "en", "zh"];
+export const LANGS: Lang[] = ["en", "es", "zh"];
 export const asLang = (s: string | null | undefined): Lang => (s === "es" || s === "zh" ? s : "en");
 
 export function has(lang: Lang, key: string) {

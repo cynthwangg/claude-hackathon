@@ -41,19 +41,18 @@ export default function WeekPage() {
     load();
   };
 
-  const draftLink = (s: Step) => (s.kind === "ask_ctc_question" || s.kind === "confirm_resubmit" ? t(lang, "week.see_question") : t(lang, "week.see_letter"));
+  const draftLink = (s: Step) => t(lang, `draft.${s.kind}`);
 
   return (
     <Shell id={id} lang={lang} name={header.name} active="week" routeKind={header.route_kind} mock={header.mock}>
-      <p className="micro" style={{ marginTop: 24, marginBottom: 0 }}>{t(lang, "week.title")}</p>
       {w.headline.kind === "upload_evaluation" ? (
         <section className="section first">
-          <h1 style={{ marginTop: 8 }}>{w.headline.text}</h1>
+          <h1 style={{ marginTop: 0 }}>{w.headline.text}</h1>
           <Link className="btn" href={`/c/${id}/documents`}>{t(lang, "nav.documents")}</Link>
         </section>
       ) : (
         <section className="section first">
-          <h1 style={{ marginTop: 8 }}>{w.headline.text}</h1>
+          <h1 style={{ marginTop: 0 }}>{w.headline.text}</h1>
           <p>{w.headline.why}</p>
           {w.why_now && <p><span className="muted">{t(lang, "week.why_now")} · </span>{w.why_now}</p>}
           {w.cost && <p><span className="muted">{t(lang, "week.cost")} · </span>{w.cost}</p>}

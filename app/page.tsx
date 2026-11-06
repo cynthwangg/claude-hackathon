@@ -4,13 +4,16 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { api, errorKey } from "@/components/api";
 import { ErrorLine } from "@/components/Shell";
-import { LANGS, t } from "@/lib/i18n";
+import { t } from "@/lib/i18n";
 import type { Lang } from "@/rules/types";
+import s from "./welcome.module.css";
 
-/** 6.1. Two sentences on what this is and is not, a language, one button. */
+const ORDER: Lang[] = ["en", "es", "zh"];
+
+/** 6.1. Her situation in one sentence, what happens next in one line, a language, one button. */
 export default function Welcome() {
   const router = useRouter();
-  const [lang, setLang] = useState<Lang>("es");
+  const [lang, setLang] = useState<Lang>("en");
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
@@ -38,21 +41,23 @@ export default function Welcome() {
 
   return (
     <main className="wrap" lang={lang}>
-      <div className="row sans" style={{ marginTop: 24, gap: 18 }} role="group" aria-label="Language">
-        {LANGS.map((l) => (
-          <button key={l} className="link" style={{ color: l === lang ? "var(--ink)" : undefined, textDecoration: l === lang ? "none" : undefined }} aria-pressed={l === lang} onClick={() => choose(l)} lang={l}>
-            {t(l, `lang.${l}`)}
-          </button>
-        ))}
+      <div className={s.top}>
+        <span className={s.brand} lang="en">Earned</span>
+        <div className={s.langs} role="group" aria-label="Language">
+          {ORDER.map((l) => (
+            <button key={l} type="button" className={`link ${s.lang}`} aria-pressed={l === lang} onClick={() => choose(l)} lang={l}>
+              {t(l, `lang.${l}`)}
+            </button>
+          ))}
+        </div>
       </div>
-      <h1>Earned</h1>
-      <p>{t(lang, "welcome.p1")}</p>
+      <h1 className={s.title}>{t(lang, "welcome.p1")}</h1>
       <p>{t(lang, "welcome.p2")}</p>
-      <p>{t(lang, "welcome.p3")}</p>
-      <div style={{ marginTop: 24 }}>
-        <button className="btn" onClick={start} disabled={busy}>{t(lang, "welcome.start")}</button>
+      <p className="muted">{t(lang, "welcome.p3")}</p>
+      <div className={s.action}>
+        <button type="button" className="btn" onClick={start} disabled={busy}>{t(lang, "welcome.start")}</button>
       </div>
-      <p className="micro" style={{ marginTop: 28 }}>{t(lang, "welcome.depth")}</p>
+      <p className={`micro ${s.depth}`}>{t(lang, "welcome.depth")}</p>
       {err && <ErrorLine lang={lang} k={err} retry={start} />}
     </main>
   );

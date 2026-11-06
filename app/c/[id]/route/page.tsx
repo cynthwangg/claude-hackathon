@@ -37,38 +37,44 @@ export default function RoutePage() {
       {r.blocker && (
         <section className="section first">
           <p>{t(lang, "route.blocker")}</p>
-          <div className="item"><span>{r.blocker.text}</span><button className="state" onClick={() => setWhy(r.blocker!.rule_id)}>{t(lang, "state.missing")}</button></div>
+          <div className="item"><span>{r.blocker.text}</span><button className="state" onClick={() => setWhy(r.blocker!.rule_id)} aria-haspopup="dialog">{t(lang, "state.missing")}</button></div>
         </section>
       )}
 
       <section className={`section ${r.blocker ? "" : "first"}`}>
-        <ol style={{ margin: 0, paddingLeft: 22 }}>
-          {r.steps.map((s) => (
-            <li key={s.key} className="item" style={{ display: "list-item", borderTop: "1px solid var(--rule)" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
+        <ol className="steps">
+          {r.steps.filter((s) => s.key !== "route.step.ctc_reviews").map((s) => (
+            <li key={s.key}>
+              <div className="item">
                 <span>{s.text}{s.note && <span className="small muted"> · {s.note}</span>}</span>
-                <button className="state" onClick={() => setWhy(s.rule_id)}>{s.state_word}</button>
+                <button className="state" onClick={() => setWhy(s.rule_id)} aria-haspopup="dialog">{s.state_word}</button>
               </div>
             </li>
           ))}
+          <li>
+            <div className="item">
+              <span>{t(lang, "route.step.ctc_reviews")}<br /><span className="small muted">{t(lang, "route.timing")}</span></span>
+              <button className="state" onClick={() => setWhy("P01")} aria-haspopup="dialog">{t(lang, "route.state.waiting")}</button>
+            </div>
+          </li>
         </ol>
-        <p className="small muted" style={{ marginTop: 10 }}>{t(lang, "route.timing")}</p>
       </section>
 
       <section className="section">
         <h2>{t(lang, "route.known")}</h2>
         {r.known.map((k) => (
-          <div key={k.text} className="item small"><span>{k.text} · {k.amount}</span><button className="state" onClick={() => setWhy(k.rule_id)}>CL-659</button></div>
+          <div key={k.text} className="item small"><span>{k.text} · {k.amount}</span><button className="cite" onClick={() => setWhy(k.rule_id)} aria-label={`${t(lang, "route.source")} CL-659`}>CL-659</button></div>
         ))}
         {r.paid_note && <p className="small" style={{ marginTop: 8 }}>{r.paid_note}</p>}
-        <h2>{t(lang, "route.external")}</h2>
+        <h2 style={{ marginTop: 24 }}>{t(lang, "route.external")}</h2>
         {r.external.map((k) => <div key={k.text} className="item small"><span>{k.text}</span></div>)}
       </section>
 
       {r.bridge && (
         <section className="section">
           <h2>{t(lang, "route.bridge_title")}</h2>
-          <p className="small">{t(lang, "route.bridge")} <button className="state" onClick={() => setWhy("B01")}>{t(lang, "why.title")}</button></p>
+          <p className="small">{t(lang, "route.bridge")}</p>
+          <button className="cite" onClick={() => setWhy("B01")} aria-haspopup="dialog">CL-635</button>
         </section>
       )}
       <WhyDrawer caseId={id} lang={lang} ruleId={why} onClose={() => setWhy(null)} />

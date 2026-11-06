@@ -1,0 +1,21 @@
+.sheet:global(.drawer) { background: var(--paper); opacity: 1; box-shadow: 0 -10px 32px rgba(26, 26, 26, 0.18); }
+@media (min-width: 768px) { .sheet:global(.drawer) { box-shadow: -10px 0 32px rgba(26, 26, 26, 0.18); } }
+.sheet:global(.drawer):focus { outline: none; }
+
+.top { display: flex; justify-content: space-between; align-items: baseline; gap: 18px; min-height: 24px; }
+.top > :last-child { margin-left: auto; }
+
+.ask { margin: 0 0 4px; outline: none; }
+.quote { margin: 0 0 8px; }
+.source { margin: 0 0 4px; }
+.actions { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 6px 0 4px; }
+
+.ev { display: grid; grid-template-columns: 1fr 64px; gap: 14px; align-items: start; padding: 10px 0; border-top: 1px solid var(--rule); }
+.ev:first-of-type { border-top: 0; padding-top: 4px; }
+.ev.solo { grid-template-columns: 1fr; }
+.ev .quotes > div + div { margin-top: 4px; }
+.thumb { display: block; width: 64px; }
+.thumb img { display: block; width: 100%; border: 1px solid var(--rule); box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08); background: #fff; }
+
+.related { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+.related button { text-align: left; }

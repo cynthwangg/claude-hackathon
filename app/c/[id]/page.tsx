@@ -10,6 +10,7 @@ import { useDictation } from "@/components/useDictation";
 import { t } from "@/lib/i18n";
 import type { Intake, Turn } from "@/lib/intake/types";
 import type { Lang } from "@/rules/types";
+import s from "./opener.module.css";
 
 type CaseResp = { header: Header; intake: Intake; history: Turn[]; done: boolean };
 type MsgResp = { say: string | null; intake: Intake; done: boolean; language: Lang; header: Header | null };
@@ -27,6 +28,7 @@ export default function Opener() {
   const [err, setErr] = useState<string | null>(null);
   const form = useRef<HTMLFormElement>(null);
   const field = useRef<HTMLTextAreaElement>(null);
+  const heading = useRef<HTMLHeadingElement>(null);
   const loaded = useRef(false);
 
   useEffect(() => {
@@ -43,7 +45,7 @@ export default function Opener() {
       .catch((e) => setErr(errorKey(e)));
   }, [id]);
 
-  const dict = useDictation(lang, (s) => setText(s));
+  const dict = useDictation(lang, (v) => setText(v));
 
   useEffect(() => {
     form.current?.scrollIntoView({ block: "nearest", behavior: "smooth" });
@@ -65,6 +67,7 @@ export default function Opener() {
         if (r.done) {
           setDone(true);
           if (r.header) setHeader(r.header);
+          setTimeout(() => heading.current?.focus(), 0);
         }
       } catch (e) {
         setTurns((ts) => ts.slice(0, -1));
@@ -79,43 +82,60 @@ export default function Opener() {
   if (!header) return err ? <main className="wrap"><ErrorLine lang={lang} k={err} /></main> : <Loading lang={lang} />;
 
   const examples: [string, string][] = lang === "zh" ? [["opener.ex_lin", "opener.ex_lin_text"]] : [["opener.ex_mariana", "opener.ex_mariana_text"], ["opener.ex_lin", "opener.ex_lin_text"], ["opener.ex_nurse", "opener.ex_nurse_text"]];
+  const summary = done && intake !== null;
+  const hasText = text.trim().length > 0;
 
   return (
     <main className="wrap" lang={lang}>
       {header.mock && <p className="micro" style={{ marginTop: 12 }}>{t(lang, "mock.note")}</p>}
-      <h1>{t(lang, "opener.title")}</h1>
+      <h1 ref={heading} tabIndex={-1} className={s.heading}>{t(lang, summary ? "opener.understood" : "opener.title")}</h1>
       {turns.length === 0 && <p className="muted">{t(lang, "opener.lead")}</p>}
 
       <div aria-live="polite">
         {turns.map((tu, i) => (
-          <p key={i} className={`turn ${tu.role === "user" ? "her" : ""}`}>{tu.text}</p>
+          <p key={i} className={tu.role === "user" ? `turn ${s.her}` : "turn"}>{tu.text}</p>
         ))}
         {busy && <p className="muted">{t(lang, "opener.reading")}</p>}
       </div>
 
-      {done && intake ? (
+      {summary && intake ? (
         <Summary lang={lang} intake={intake} header={header} id={id} onChange={() => { setDone(false); setTimeout(() => field.current?.focus(), 0); }} />
       ) : (
-        <form ref={form} onSubmit={(e) => { e.preventDefault(); send(text); }} style={{ marginTop: 12 }}>
+        <form ref={form} className={s.form} onSubmit={(e) => { e.preventDefault(); send(text); }}>
           <label className="sr" htmlFor="opener">{t(lang, "opener.title")}</label>
-          <textarea id="opener" ref={field} value={text} onChange={(e) => setText(e.target.value)} placeholder={turns.length ? "" : t(lang, "opener.placeholder")} disabled={busy} onKeyDown={(e) => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) send(text); }} />
-          <div className="row">
-            <button className="btn" type="submit" disabled={busy || !text.trim()}>{t(lang, "opener.send")}</button>
+          <textarea
+            id="opener"
+            ref={field}
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            placeholder={turns.length ? "" : t(lang, "opener.placeholder")}
+            disabled={busy}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
+                e.preventDefault();
+                send(text);
+              }
+            }}
+          />
+          <div className={s.actions}>
+            {hasText && !busy && <button className="btn" type="submit">{t(lang, turns.length ? "opener.add" : "opener.send")}</button>}
             {dict.supported && (
-              <button type="button" className="link sans" onClick={dict.toggle} aria-pressed={dict.listening}>
+              <button type="button" className={`link ${s.speak}`} onClick={dict.toggle} aria-pressed={dict.listening} disabled={busy}>
                 {dict.listening ? t(lang, "opener.listening") : t(lang, "opener.speak")}
               </button>
             )}
           </div>
-          <p className="micro" style={{ marginTop: 8 }}>{dict.supported ? t(lang, "opener.hint") : t(lang, "opener.type_hint")}</p>
+          <p className="micro" style={{ marginTop: 4 }}>{dict.supported ? t(lang, "opener.hint") : t(lang, "opener.type_hint")}</p>
           {turns.length === 0 && (
-            <div className="small muted" style={{ marginTop: 22 }}>
-              <p style={{ margin: 0 }}>{t(lang, "opener.examples")}</p>
-              {examples.map(([label, body]) => (
-                <p key={label} style={{ margin: "4px 0" }}>
-                  <button type="button" className="link" onClick={() => send(t(lang, body))}>{t(lang, label)}</button>
-                </p>
-              ))}
+            <div className={s.examples}>
+              <p className="micro" style={{ margin: 0 }}>{t(lang, "opener.examples")}</p>
+              <ul>
+                {examples.map(([label, body]) => (
+                  <li key={label}>
+                    <button type="button" className={`link muted ${s.example}`} onClick={() => send(t(lang, body))}>{t(lang, label)}</button>
+                  </li>
+                ))}
+              </ul>
             </div>
           )}
         </form>
@@ -123,6 +143,12 @@ export default function Opener() {
       {err && <ErrorLine lang={lang} k={err} />}
     </main>
   );
+}
+
+/** "Commission on Teacher Credentialing (CTC)" becomes "The Commission on Teacher Credentialing, the CTC". */
+function officeName(lang: Lang, name: string) {
+  const m = name.match(/^(.+?)\s*\(([^)]+)\)\s*$/);
+  return m ? t(lang, "office.name_short", { name: m[1], short: m[2] }) : name;
 }
 
 function Summary({ lang, intake, header, id, onChange }: { lang: Lang; intake: Intake; header: Header; id: string; onChange: () => void }) {
@@ -136,24 +162,27 @@ function Summary({ lang, intake, header, id, onChange }: { lang: Lang; intake: I
   ];
   const orientation = header.pathway?.orientation ?? header.general_orientation;
   return (
-    <section style={{ marginTop: 20 }}>
-      <p>{t(lang, "opener.understood")}</p>
-      {lines.map(([k, v]) => (
+    <section className={s.summary}>
+      {lines.filter(([, v]) => v).map(([k, v]) => (
         <div key={k} className="item small"><span><span className="muted">{k} · </span>{v}</span></div>
       ))}
-      <div className="sans" style={{ padding: "8px 0" }}><button className="link muted" onClick={onChange}>{t(lang, "opener.change")}</button></div>
+      {intake.stage === "about_to_pay_agency" && <p className="small" style={{ marginTop: 8 }}>{t(lang, "stage.preflight")}</p>}
+      <div className={`sans ${s.change}`}><button type="button" className="link muted" onClick={onChange}>{t(lang, "opener.change")}</button></div>
 
-      <div className="section first" style={{ marginTop: 16 }}>
-        <h2>{t(lang, "office.title")}</h2>
+      <section className={`section first ${s.office}`} aria-labelledby="office-title">
+        <p id="office-title" className="micro" style={{ margin: 0 }}>{t(lang, "office.title")}</p>
         {header.office ? (
-          <p>{header.office.name} · <a className="sans" href={header.office.url} target="_blank" rel="noreferrer">{t(lang, "office.open")}</a></p>
+          <>
+            <h2>{officeName(lang, header.office.name)}</h2>
+            <p className="sans" style={{ margin: 0 }}><a href={header.office.url} target="_blank" rel="noreferrer">{t(lang, "office.open")}</a></p>
+            {header.office.source === "search" && <p className="micro" style={{ marginTop: 6 }}>{t(lang, "office.found_by_search")}</p>}
+          </>
         ) : (
-          <p className="muted">{t(lang, "office.unknown_state")}</p>
+          <p className="muted" style={{ marginTop: 6 }}>{t(lang, "office.unknown_state")}</p>
         )}
-        {header.office?.source === "search" && <p className="micro">{t(lang, "office.found_by_search")}</p>}
-        <p>{orientation}</p>
-      </div>
-      <div style={{ marginTop: 16 }}>
+        <p className={`small muted ${s.orientation}`}>{orientation}</p>
+      </section>
+      <div className={s.next}>
         <Link className="btn" href={`/c/${id}/documents`}>{t(lang, "opener.continue")}</Link>
       </div>
     </section>

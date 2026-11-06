@@ -23,7 +23,7 @@ for (const [lang, d, langLabel] of [["es", es as Dict, "Español"], ["en", en as
     // 6.2 open opener
     await page.getByRole("button", { name: tt(d, "opener.ex_mariana") }).click();
     await expect(page.getByText(tt(d, "opener.understood"))).toBeVisible();
-    await expect(page.getByText("Commission on Teacher Credentialing (CTC)")).toBeVisible();
+    await expect(page.getByRole("heading", { name: /Commission on Teacher Credentialing/ })).toBeVisible();
     await page.getByRole("link", { name: tt(d, "opener.continue") }).click();
 
     // 6.3 documents one at a time, letter first
@@ -59,14 +59,14 @@ for (const [lang, d, langLabel] of [["es", es as Dict, "Español"], ["en", en as
 
     // 6.7 the letter to the school names her courses
     await page.locator(".item", { hasText: tt(d, "week.request_school_letter") }).getByRole("link").click();
-    await expect(page.locator("textarea#letter")).toHaveValue(/Trabajo Docente I y Trabajo Docente II/);
+    await expect(page.getByTestId("letter")).toContainText("Trabajo Docente I y Trabajo Docente II");
     await expect(page.getByText(tt(d, "letter.nothing_sent"))).toBeVisible();
 
     // 6.8 progress, the school sent it: document obtained, never accepted
     await page.getByRole("link", { name: tt(d, "nav.progress") }).click();
     const school = page.locator(".item", { hasText: tt(d, "action.request_school_letter") });
-    await school.getByRole("button", { name: tt(d, "progress.to.sent") }).click();
-    await school.getByRole("button", { name: tt(d, "progress.to.document_obtained") }).click();
+    await school.getByRole("button", { name: tt(d, "progress.to.request_school_letter.sent") }).click();
+    await school.getByRole("button", { name: tt(d, "progress.to.request_school_letter.document_obtained") }).click();
     await expect(school).toContainText(tt(d, "progress.state.document_obtained"));
     await expect(page.locator("main")).not.toContainText(tt(d, "progress.state.accepted"));
 

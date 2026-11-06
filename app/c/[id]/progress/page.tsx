@@ -6,7 +6,7 @@ import { useCallback, useEffect, useState } from "react";
 import { api, errorKey } from "@/components/api";
 import { ErrorLine, Loading, Shell } from "@/components/Shell";
 import type { Header } from "@/components/types";
-import { t } from "@/lib/i18n";
+import { fmtDate, has, t } from "@/lib/i18n";
 
 type Item = { id: string; kind: string; title: string; state: string; state_word: string; statement_only: boolean; since: string | null; deadline: string | null; can_undo: boolean };
 const NEXT: Record<string, string | null> = { not_started: "sent", sent: "document_obtained", document_obtained: "submitted", submitted: "accepted", accepted: null };
@@ -38,14 +38,22 @@ export default function ProgressPage() {
   return (
     <Shell id={id} lang={lang} name={header.name} active="progress" routeKind={header.route_kind} mock={header.mock}>
       <h1>{t(lang, "progress.title")}</h1>
+      <p className="small muted">{t(lang, "progress.today", { date: fmtDate(lang, header.today) })}</p>
       {items.length === 0 && <p className="muted">{t(lang, "progress.empty")}</p>}
       {items.map((x) => {
         const next = NEXT[x.state];
+        const label = next ? (has(lang, `progress.to.${x.kind}.${next}`) ? t(lang, `progress.to.${x.kind}.${next}`) : t(lang, `progress.to.${next}`)) : null;
         return (
           <div key={x.id} className="item" style={{ display: "block" }}>
-            <div><strong style={{ fontWeight: 500 }}>{x.title}</strong> · {x.state_word}{x.since && <span className="small muted"> · {x.since}</span>}{x.deadline && <span className="small muted"> · {x.deadline}</span>}</div>
+            <div className="row" style={{ marginTop: 0, justifyContent: "space-between", alignItems: "baseline" }}>
+              <span style={{ fontWeight: 500 }}>{x.title}</span>
+              <span className="sans">{x.state_word}</span>
+            </div>
+            {(x.state !== "not_started" || x.deadline) && (
+              <div className="small muted">{[x.state !== "not_started" ? x.since : null, x.deadline].filter(Boolean).join(" · ")}</div>
+            )}
             <div className="row sans" style={{ marginTop: 4 }}>
-              {next && <button className="link" onClick={() => move(x, { state: next })}>{t(lang, `progress.to.${next}`)}</button>}
+              {label && <button className="link" onClick={() => move(x, { state: next! })}>{label}</button>}
               {x.statement_only && <Link className="link" href={`/c/${id}/documents`}>{t(lang, "progress.upload_notice")}</Link>}
               {x.can_undo && <button className="link muted" onClick={() => move(x, { undo: true })}>{t(lang, "progress.undo")}</button>}
             </div>
