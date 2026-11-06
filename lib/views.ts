@@ -11,6 +11,8 @@ import type { FactIndex } from "./facts";
 import { fmtDate, t } from "./i18n";
 import { isMock } from "./model";
 import { findOffice } from "./office";
+import { db } from "./db";
+import type { Authority } from "@/data/authorities";
 import { experienceYears, letterItems, requirementText, stateWord, vars } from "./present";
 
 type C = NonNullable<LoadedCase>;
@@ -18,8 +20,18 @@ export type Line = { rule_id: string; state: string; state_word: string; text: s
 
 const line = (lang: Lang, r: Requirement, f: FactIndex): Line => ({ rule_id: r.rule_id, state: r.state, state_word: stateWord(lang, r, f), text: requirementText(lang, r, f) });
 
-export async function caseHeader(c: C) {
+/** The office is looked up once per profession and state and saved on the case. */
+async function officeFor(c: C): Promise<Authority | null> {
+  const key = `${c.intakeObj.profession}:${c.intakeObj.us_state}`;
+  const saved = c.office ? (JSON.parse(c.office) as { key: string; office: Authority | null }) : null;
+  if (saved && saved.key === key && saved.office) return saved.office;
   const office = await findOffice(c.intakeObj.profession, c.intakeObj.profession_words, c.intakeObj.us_state);
+  if (office) await db.case.update({ where: { id: c.id }, data: { office: JSON.stringify({ key, office }) } });
+  return office;
+}
+
+export async function caseHeader(c: C) {
+  const office = await officeFor(c);
   return {
     id: c.id,
     lang: c.lang,

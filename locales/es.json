@@ -398,5 +398,6 @@
   "general.title": "Lo que podemos hacer hoy",
   "general.documents": "Sube lo que tengas. Leo cada documento y te digo exactamente qué dice.",
   "join.and": " y ",
-  "why.back": "Volver"
+  "why.back": "Volver",
+  "req.R02.unknown.q.have_evaluation": "Qué agencia hace tu evaluación. Tiene que estar en la lista de agencias aprobadas por la CTC."
 }

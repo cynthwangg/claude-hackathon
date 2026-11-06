@@ -402,5 +402,6 @@
   "general.title": "What we can do today",
   "general.documents": "Upload what you have. I read each document and tell you exactly what it says.",
   "join.and": " and ",
-  "why.back": "Back"
+  "why.back": "Back",
+  "req.R02.unknown.q.have_evaluation": "Which agency writes your evaluation. It has to be one on the CTC's approved list."
 }

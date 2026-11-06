@@ -152,7 +152,6 @@ function Summary({ lang, intake, header, id, onChange }: { lang: Lang; intake: I
         )}
         {header.office?.source === "search" && <p className="micro">{t(lang, "office.found_by_search")}</p>}
         <p>{orientation}</p>
-        {intake.stage === "about_to_pay_agency" && header.route_kind !== "none" && <p>{t(lang, "stage.preflight")}</p>}
       </div>
       <div style={{ marginTop: 16 }}>
         <Link className="btn" href={`/c/${id}/documents`}>{t(lang, "opener.continue")}</Link>

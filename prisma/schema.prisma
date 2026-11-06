@@ -14,6 +14,7 @@ model Case {
   first_name String?
   intake     String     @default("{}")
   history    String     @default("[]")
+  office     String?
   facts      Fact[]
   documents  Document[]
   actions    Action[]
