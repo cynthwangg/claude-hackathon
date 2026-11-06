@@ -403,5 +403,12 @@
   "general.documents": "Upload what you have. I read each document and tell you exactly what it says.",
   "join.and": " and ",
   "why.back": "Back",
-  "req.R02.unknown.q.have_evaluation": "Which agency writes your evaluation. It has to be one on the CTC's approved list."
+  "req.R02.unknown.q.have_evaluation": "Which agency writes your evaluation. It has to be one on the CTC's approved list.",
+  "wa.send_photo": "Send a photo or a PDF of it here.",
+  "wa.link": "Your case on the web, to read it calmly · {url}",
+  "wa.voice_declined": "I can't listen to voice notes yet. Write me the answer and I'll read it.",
+  "wa.unsupported": "I can't read that. Send me a photo or a PDF of the document.",
+  "wa.fix": "If something is wrong, open the web link and fix it there.",
+  "wa.reading": "Reading. One moment.",
+  "wa.why_web": "Each line opens to the CTC sentence behind it on the web · {url}"
 }

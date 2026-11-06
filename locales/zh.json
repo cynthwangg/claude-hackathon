@@ -218,5 +218,12 @@
   "why.live_failed": "现在打不开 CTC 的网页。引文读取于 {date}。",
   "why.statement": "你自己的回答",
   "docs.letter_deadline_note": "CTC 从来信日期起算 60 天（Check Application Status 页面）。这个数字在这里不能修改。",
-  "docs.not_found": "文件里没有找到"
+  "docs.not_found": "文件里没有找到",
+  "wa.send_photo": "请在这里发一张照片或 PDF。",
+  "wa.link": "你的情况网页版，方便慢慢看 · {url}",
+  "wa.voice_declined": "我现在还听不了语音。请把回答打字发给我。",
+  "wa.unsupported": "这个我读不了。请发文件的照片或 PDF。",
+  "wa.fix": "如果有不对的地方，打开网页链接在那里修改。",
+  "wa.reading": "正在读取。请稍等。",
+  "wa.why_web": "网页上的每一行都能打开它背后的 CTC 原文 · {url}"
 }

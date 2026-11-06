@@ -399,5 +399,12 @@
   "general.documents": "Sube lo que tengas. Leo cada documento y te digo exactamente qué dice.",
   "join.and": " y ",
   "why.back": "Volver",
-  "req.R02.unknown.q.have_evaluation": "Qué agencia hace tu evaluación. Tiene que estar en la lista de agencias aprobadas por la CTC."
+  "req.R02.unknown.q.have_evaluation": "Qué agencia hace tu evaluación. Tiene que estar en la lista de agencias aprobadas por la CTC.",
+  "wa.send_photo": "Mándame aquí una foto o un PDF.",
+  "wa.link": "Tu caso en la web, para leerlo con calma · {url}",
+  "wa.voice_declined": "Todavía no puedo escuchar notas de voz. Escríbeme la respuesta y la leo.",
+  "wa.unsupported": "Eso no lo puedo leer. Mándame una foto o un PDF del documento.",
+  "wa.fix": "Si algo está mal, abre el enlace y corrígelo ahí.",
+  "wa.reading": "Leyendo. Un momento.",
+  "wa.why_web": "Cada línea se abre a la frase de la CTC que la respalda, en la web · {url}"
 }
