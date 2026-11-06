@@ -125,3 +125,10 @@ describe("one test per rule", () => {
     expect(ev("R01", [fact("evaluation.report_type", "document_by_document"), fact("ctc_decision.satisfied", ["R01"], "official")]).state).toBe("official");
   });
 });
+
+describe("multi-page transcripts", () => {
+  it("combines course lists from several transcript uploads", () => {
+    const rows = [fact("transcript.present", true), { ...fact("transcript.course_names", ["Matemáticas I"]), id: "p1" }, { ...fact("transcript.course_names", ["Trabajo Docente I"]), id: "p2" }];
+    expect(ev("R05", rows).state).toBe("from_document");
+  });
+});

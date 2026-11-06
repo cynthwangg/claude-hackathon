@@ -61,8 +61,9 @@ export class FactIndex {
   }
 
   private derive(ctx: DerivedContext) {
-    const courses = this.get<string[]>("transcript.course_names");
-    if (this.has("transcript.present") && Array.isArray(courses)) {
+    // A transcript photographed page by page arrives as several documents; their course lists are combined.
+    const courses = Array.from(new Set(this.rows("transcript.course_names").flatMap((r) => (Array.isArray(r.value) ? (r.value as string[]) : []))));
+    if (this.has("transcript.present") && courses.length) {
       const practicum = courses.filter((c) => containsAny(c, PRACTICUM_SYNONYMS));
       if (practicum.length) {
         this.derived("transcript.practicum_courses", practicum, ["transcript.course_names"]);
