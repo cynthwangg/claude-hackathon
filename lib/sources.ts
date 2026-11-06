@@ -40,7 +40,7 @@ const HOUR = 3600_000;
 async function pageText(url: string): Promise<string | null> {
   const hit = pages.get(url);
   if (hit && Date.now() - hit.at < HOUR) return hit.text;
-  const res = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0 (Earned source check)" }, signal: AbortSignal.timeout(15_000) });
+  const res = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0 (Bridge source check)" }, signal: AbortSignal.timeout(15_000) });
   if (!res.ok) return null;
   const type = res.headers.get("content-type") ?? "";
   let text: string;

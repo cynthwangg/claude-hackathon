@@ -42,7 +42,7 @@ export default function Welcome() {
   return (
     <main className="wrap" lang={lang}>
       <div className={s.top}>
-        <span className={s.brand} lang="en">Earned</span>
+        <span className={s.brand} lang="en">Bridge</span>
         <div className={s.langs} role="group" aria-label="Language">
           {ORDER.map((l) => (
             <button key={l} type="button" className={`link ${s.lang}`} aria-pressed={l === lang} onClick={() => choose(l)} lang={l}>

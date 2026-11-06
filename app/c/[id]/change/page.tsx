@@ -93,14 +93,14 @@ export default function ChangePage() {
             {result.changes.length === 0 && !result.next && result.notes.length === 0 && <p className="small muted">{t(lang, "change.summary.nothing")}</p>}
             {result.changes.map((c) => (
               <div key={c.rule_id} className="item" style={{ display: "block" }}>
-                <div className="strike small">{c.before.text} · {c.before.state_word}</div>
-                <div className="changed">{c.after.text} · <span className="sans">{c.after.state_word}</span></div>
+                <div className="strike small">{c.before.text}, {c.before.state_word}</div>
+                <div className="changed">{c.after.text}, <span className="sans">{c.after.state_word}</span></div>
               </div>
             ))}
             {result.next && (
               <div className="item" style={{ display: "block" }}>
-                <div className="strike small">{t(lang, "change.next_was")} · {result.next.was}</div>
-                <div className="changed">{t(lang, "change.next_now")} · {result.next.now}</div>
+                <div className="strike small"><span className="label">{t(lang, "change.next_was")}</span>{result.next.was}</div>
+                <div className="changed"><span className="label">{t(lang, "change.next_now")}</span>{result.next.now}</div>
               </div>
             )}
             {result.notes.map((n) => <div key={n} className="item changed small">{n}</div>)}

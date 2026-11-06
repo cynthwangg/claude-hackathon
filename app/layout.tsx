@@ -5,7 +5,7 @@ import "./globals.css";
 const newsreader = Newsreader({ subsets: ["latin", "latin-ext"], weight: ["400", "500"], style: ["normal", "italic"], variable: "--font-newsreader", display: "swap" });
 
 export const metadata: Metadata = {
-  title: "Earned",
+  title: "Bridge",
   description: "Reads the documents you already have, names the office that decides, and shows what is still needed.",
 };
 

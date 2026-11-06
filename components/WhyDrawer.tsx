@@ -124,7 +124,7 @@ export function WhyDrawer({ caseId, lang, ruleId, onClose }: { caseId: string; l
 
             <h3>{t(lang, "why.where")}</h3>
             <blockquote className={s.quote} lang="en">“{why.excerpt}”</blockquote>
-            <p className={`micro ${s.source}`}>{why.source_title} · {t(lang, "why.read_on", { date: why.read_on })}</p>
+            <p className={`micro ${s.source}`}>{why.source_title}, {t(lang, "why.read_on", { date: why.read_on })}</p>
             <div className={`sans ${s.actions}`}>
               <a href={why.source_url} target="_blank" rel="noreferrer">{t(lang, "why.open_page")}</a>
               <button className="link" onClick={check} disabled={live === "checking"}>{t(lang, "why.live")}</button>
@@ -151,7 +151,7 @@ export function WhyDrawer({ caseId, lang, ruleId, onClose }: { caseId: string; l
                         ) : (
                           <>
                             <div className={s.quotes}>{quotes.map((q) => <div key={q}><span className="mark">{q}</span></div>)}</div>
-                            <div className="micro" style={{ marginTop: 4 }}>{e.label}{e.page ? ` · ${t(lang, "why.page", { n: e.page })}` : ""}</div>
+                            <div className="micro" style={{ marginTop: 4 }}>{e.label}{e.page ? `, ${t(lang, "why.page", { n: e.page })}` : ""}</div>
                           </>
                         )}
                       </div>

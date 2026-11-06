@@ -44,8 +44,7 @@ export function RequestBlock({ lang, current, heading, example, reading, note, e
 
   const body = (
     <div className="small">
-      {has(lang, `ask.${current}.looks`) && <p><span className="muted">{t(lang, "docs.looks_like")} · </span>{t(lang, `ask.${current}.looks`)}</p>}
-      {has(lang, `ask.${current}.for`) && <p><span className="muted">{t(lang, "docs.looking_for")} · </span>{t(lang, `ask.${current}.for`)}</p>}
+      {has(lang, `ask.${current}.looks`) && <p>{t(lang, `ask.${current}.looks`)}</p>}
       {!reading && (
         <div className={`sans ${s.actions}`}>
           <FilePick label={t(lang, "docs.choose")} primary onFile={onFile} />

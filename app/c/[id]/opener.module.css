@@ -16,5 +16,5 @@
 .change { padding: 8px 0 0; }
 .office { margin-top: 20px; }
 .office h2 { margin: 4px 0 6px; }
-.orientation { margin-top: 8px; }
+.orientation { margin-top: 8px; white-space: pre-line; }
 .next { margin-top: 20px; }

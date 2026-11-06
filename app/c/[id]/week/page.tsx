@@ -54,9 +54,9 @@ export default function WeekPage() {
         <section className="section first">
           <h1 style={{ marginTop: 0 }}>{w.headline.text}</h1>
           <p>{w.headline.why}</p>
-          {w.why_now && <p><span className="muted">{t(lang, "week.why_now")} · </span>{w.why_now}</p>}
-          {w.cost && <p><span className="muted">{t(lang, "week.cost")} · </span>{w.cost}</p>}
-          <p><span className="muted">{t(lang, "week.after")} · </span>{w.after}</p>
+          {w.why_now && <p><span className="label">{t(lang, "week.why_now")}</span>{w.why_now}</p>}
+          {w.cost && <p><span className="label">{t(lang, "week.cost")}</span>{w.cost}</p>}
+          <p><span className="label">{t(lang, "week.after")}</span>{w.after}</p>
           {w.before_paying.length > 0 && (
             <div style={{ padding: "8px 0", borderTop: "1px solid var(--rule)" }}>
               <p className="muted" style={{ marginBottom: 4 }}>{t(lang, "week.before_paying")}</p>

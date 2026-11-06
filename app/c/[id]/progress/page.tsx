@@ -50,7 +50,7 @@ export default function ProgressPage() {
               <span className="sans">{x.state_word}</span>
             </div>
             {(x.state !== "not_started" || x.deadline) && (
-              <div className="small muted">{[x.state !== "not_started" ? x.since : null, x.deadline].filter(Boolean).join(" · ")}</div>
+              <div className="small muted">{[x.state !== "not_started" ? x.since : null, x.deadline].filter(Boolean).join(", ")}</div>
             )}
             <div className="row sans" style={{ marginTop: 4 }}>
               {label && <button className="link" onClick={() => move(x, { state: next! })}>{label}</button>}

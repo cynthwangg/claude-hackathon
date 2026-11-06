@@ -164,7 +164,7 @@ function Summary({ lang, intake, header, id, onChange }: { lang: Lang; intake: I
   return (
     <section className={s.summary}>
       {lines.filter(([, v]) => v).map(([k, v]) => (
-        <div key={k} className="item small"><span><span className="muted">{k} · </span>{v}</span></div>
+        <div key={k} className="item small"><span><span className="label">{k}</span>{v}</span></div>
       ))}
       {intake.stage === "about_to_pay_agency" && <p className="small" style={{ marginTop: 8 }}>{t(lang, "stage.preflight")}</p>}
       <div className={`sans ${s.change}`}><button type="button" className="link muted" onClick={onChange}>{t(lang, "opener.change")}</button></div>

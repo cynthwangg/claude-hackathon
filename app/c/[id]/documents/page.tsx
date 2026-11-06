@@ -80,9 +80,7 @@ export default function Documents() {
   return (
     <Shell id={id} lang={lang} name={header.name} active="documents" routeKind={header.route_kind} mock={header.mock}>
       <h1>{t(lang, "docs.title")}</h1>
-      <p className={`muted ${s.intro}`}>
-        {haveNouns.length > 0 ? t(lang, "docs.have", { list: joinList(lang, haveNouns) }) : t(lang, "docs.intro")}
-      </p>
+      {haveNouns.length > 0 && <p className={`muted ${s.intro}`}>{t(lang, "docs.have", { list: joinList(lang, haveNouns) })}</p>}
 
       <RequestBlock
         lang={lang}
@@ -102,7 +100,7 @@ export default function Documents() {
 
       <div className={`sans ${s.tail}`}>
         <FilePick label={t(lang, "docs.add_another")} onFile={(f) => upload(f, null)} />
-        {skipped.length > 0 && <p className={`micro ${s.skipped}`}>{t(lang, "docs.skipped")} · {joinList(lang, skipped.map(noun))}</p>}
+        {skipped.length > 0 && <p className={`micro ${s.skipped}`}><span className="label">{t(lang, "docs.skipped")}</span>{joinList(lang, skipped.map(noun))}</p>}
       </div>
     </Shell>
   );

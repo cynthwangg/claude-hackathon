@@ -130,19 +130,19 @@ function General({ id, header, p }: { id: string; header: Header; p: Position })
         <h2>{t(lang, "office.title")}</h2>
         {header.office ? (
           <>
-            <p>{header.office.name} · <a className="sans" href={header.office.url} target="_blank" rel="noreferrer">{t(lang, "office.open")}</a></p>
+            <p>{header.office.name}<br /><a className="sans" href={header.office.url} target="_blank" rel="noreferrer">{t(lang, "office.open")}</a></p>
             {header.office.source === "search" && <p className="micro">{t(lang, "office.found_by_search")}</p>}
             {header.office.cited && <p className="small quote" lang="en">“{header.office.cited}”</p>}
           </>
         ) : (
           <p className="muted">{t(lang, "office.unknown_state")}</p>
         )}
-        <p className="small">{header.general_orientation}</p>
+        <p className="small" style={{ whiteSpace: "pre-line" }}>{header.general_orientation}</p>
       </section>
       <section className="section">
         <h2>{t(lang, "general.title")}</h2>
         <p className="small">{t(lang, "general.documents")}</p>
-        {p.doc_count > 0 && <p className="small"><span className="muted">{t(lang, "docs.already")} · </span>{p.doc_count}</p>}
+        {p.doc_count > 0 && <p className="small"><span className="label">{t(lang, "docs.already")}</span>{p.doc_count}</p>}
         <div className="row sans">
           <Link className="link" href={`/c/${id}/documents`}>{t(lang, "nav.documents")}</Link>
         </div>

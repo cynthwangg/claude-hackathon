@@ -46,7 +46,7 @@ export default function RoutePage() {
           {r.steps.filter((s) => s.key !== "route.step.ctc_reviews").map((s) => (
             <li key={s.key}>
               <div className="item">
-                <span>{s.text}{s.note && <span className="small muted"> · {s.note}</span>}</span>
+                <span>{s.text}{s.note && <span className="small muted" style={{ display: "block" }}>{s.note}</span>}</span>
                 <button className="state" onClick={() => setWhy(s.rule_id)} aria-haspopup="dialog">{s.state_word}</button>
               </div>
             </li>
@@ -63,7 +63,7 @@ export default function RoutePage() {
       <section className="section">
         <h2>{t(lang, "route.known")}</h2>
         {r.known.map((k) => (
-          <div key={k.text} className="item small"><span>{k.text} · {k.amount}</span><button className="cite" onClick={() => setWhy(k.rule_id)} aria-label={`${t(lang, "route.source")} CL-659`}>CL-659</button></div>
+          <div key={k.text} className="item small"><span>{k.text}, {k.amount}</span><button className="cite" onClick={() => setWhy(k.rule_id)} aria-label={`${t(lang, "route.source")} CL-659`}>CL-659</button></div>
         ))}
         {r.paid_note && <p className="small" style={{ marginTop: 8 }}>{r.paid_note}</p>}
         <h2 style={{ marginTop: 24 }}>{t(lang, "route.external")}</h2>

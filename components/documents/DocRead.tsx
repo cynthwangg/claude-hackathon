@@ -50,7 +50,7 @@ function Quote({ f, lang, docLang }: { f: Fact; lang: Lang; docLang: string | nu
   return (
     <div className={`quote ${s.quote}`}>
       <span lang={docLang ?? undefined}>“{f.original_text}”</span>
-      {f.page ? ` · ${t(lang, "docs.page", { n: f.page })}` : ""}
+      {f.page ? `, ${t(lang, "docs.page", { n: f.page })}` : ""}
     </div>
   );
 }
@@ -99,7 +99,7 @@ function FactRow({ f, lang, docLang, editing, onChanged }: { f: Fact; lang: Lang
           {failed && <p className={`micro ${s.failed}`} role="alert">{t(lang, "docs.save_failed")}</p>}
         </>
       ) : (
-        <div className={f.key === "ctc_letter.items" ? s.pre : undefined}><span className="muted">{label} · </span>{shown}</div>
+        <div className={f.key === "ctc_letter.items" ? s.pre : undefined}><span className="label">{label}</span>{shown}</div>
       )}
       {f.key !== "ctc_letter.items" && <Quote f={f} lang={lang} docLang={docLang} />}
       {f.key === "ctc_letter.deadline_days" && <div className="micro">{t(lang, "docs.letter_deadline_note")}</div>}
@@ -148,7 +148,7 @@ export function DocRead({ doc, lang, noun, onChanged }: { doc: Doc; lang: Lang; 
 
         {courses && (
           <div className={s.courses}>
-            <p><span className="muted">{t(lang, "label.transcript.course_names")} · </span>{courses.length}</p>
+            <p><span className="label">{t(lang, "label.transcript.course_names")}</span>{courses.length}</p>
             {practicum.length > 0 && (
               <>
                 <p className={`muted ${s.courseLabel}`}>{t(lang, "label.transcript.practicum_courses")}</p>
