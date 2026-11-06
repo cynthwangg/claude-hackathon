@@ -1,10 +1,10 @@
 .intro { margin: 0 0 4px; }
 
 .pick { position: relative; }
-.pick:focus-within { outline: 2px solid var(--accent); outline-offset: 2px; }
+.pick:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
 .fileInput { position: absolute; width: 1px; height: 1px; padding: 0; margin: 0; opacity: 0; overflow: hidden; clip: rect(0 0 0 0); border: 0; }
 
-.actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 22px; margin-top: 16px; }
+.actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 28px; margin-top: 20px; }
 .after { margin: 18px 0 0; }
 
 .listHead { margin-top: 36px; }
@@ -43,3 +43,4 @@
 
 .tail { padding: 14px 0; border-top: 1px solid var(--rule); }
 .skipped { margin: 8px 0 0; }
+.skipped :global(.label) { display: inline; margin-right: 6px; }

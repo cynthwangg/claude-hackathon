@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { api, errorKey } from "@/components/api";
 import { DocRead, type Doc } from "@/components/documents/DocRead";
 import { FilePick } from "@/components/documents/FilePick";
@@ -24,6 +24,9 @@ export default function Documents() {
   const [note, setNote] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
   const skipKey = `earned.skip.${id}`;
+  // After a document is read, bring her back up to the next request so the flow keeps moving.
+  const requestRef = useRef<HTMLDivElement>(null);
+  const toRequest = () => requestRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
 
   const load = useCallback(async () => {
     try {
@@ -69,7 +72,9 @@ export default function Documents() {
       const r = await api<{ document: Doc; reclassified: boolean }>(`/api/cases/${id}/documents`, { method: "POST", body: fd });
       if (r.document.status !== "read") setErr("docs.unreadable");
       else if (r.reclassified) setNote(t(lang, "docs.reclassified", { noun: t(lang, `noun.${r.document.kind}`) }));
+      else setNote(t(lang, "docs.got_it", { noun: noun(r.document.kind) }));
       await load();
+      setTimeout(toRequest, 50);
     } catch (e) {
       setErr(errorKey(e) === "notconfigured" ? "notconfigured" : "docs.unreadable");
     } finally {
@@ -82,6 +87,7 @@ export default function Documents() {
       <h1>{t(lang, "docs.title")}</h1>
       {haveNouns.length > 0 && <p className={`muted ${s.intro}`}>{t(lang, "docs.have", { list: joinList(lang, haveNouns) })}</p>}
 
+      <div ref={requestRef} style={{ scrollMarginTop: 16 }}>
       <RequestBlock
         lang={lang}
         current={current}
@@ -94,9 +100,14 @@ export default function Documents() {
         onFile={(f) => current && upload(f, current)}
         onSkip={() => current && skip(current)}
       />
+      </div>
 
       {read.length > 0 && <h2 className={s.listHead}>{t(lang, "docs.hydrated")}</h2>}
       {newest.map((d) => <DocRead key={d.id} doc={d} lang={lang} noun={noun(d.kind)} onChanged={load} />)}
+
+      {read.length > 0 && current && !reading && (
+        <p className="sans" style={{ marginTop: 20 }}><button type="button" className="link" onClick={toRequest}>{t(lang, "docs.next", { noun: noun(current) })}</button></p>
+      )}
 
       <div className={`sans ${s.tail}`}>
         <FilePick label={t(lang, "docs.add_another")} onFile={(f) => upload(f, null)} />
