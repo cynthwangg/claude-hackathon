@@ -1,10 +1,14 @@
 :root {
-  --paper: #fbf9f4;
-  --ink: #1a1a1a;
-  --muted: #6b6760;
-  --rule: #e3dfd6;
-  --accent: #1f3a5f;
-  --mark: #fff3b0;
+  /* Same palette as the landing page (public/landing.html, "passport"). */
+  --paper: #1a2130;
+  --ink: #efe7d6;
+  --muted: #9aa0ab;
+  --rule: rgba(239, 231, 214, 0.14);
+  --accent: #e0795c;
+  --mark: rgba(224, 121, 92, 0.38);
+  --field: #202939;
+  --sheet: #fbf9f4;
+  --sheet-ink: #1d1a16;
   --font-serif: var(--font-newsreader), "Newsreader", Georgia, serif;
   --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-cjk: "Noto Serif SC", "Songti SC", "STSong", serif;
@@ -28,8 +32,9 @@ p { margin: 0 0 12px; }
 .micro { font-family: var(--font-sans); font-size: 13px; color: var(--muted); }
 .label { display: block; font-family: var(--font-sans); font-size: 13px; line-height: 1.4; color: var(--muted); }
 
-.btn { display: inline-block; background: var(--accent); color: #fff; font-family: var(--font-serif); font-size: 17px; line-height: 1.3; padding: 12px 22px; border: 0; border-radius: 0; cursor: pointer; text-decoration: none; }
+.btn { display: inline-block; background: var(--accent); color: #1a1410; font-family: var(--font-serif); font-size: 17px; line-height: 1.3; padding: 12px 22px; border: 0; border-radius: 0; cursor: pointer; text-decoration: none; }
 .btn:disabled { opacity: 0.5; cursor: default; }
+.btn:hover:not(:disabled) { filter: brightness(1.07); }
 .btn:focus-visible, .link:focus-visible, .state:focus-visible, a:focus-visible, textarea:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .link { background: none; border: 0; padding: 0; color: var(--accent); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; font: inherit; }
 .link.muted { color: var(--muted); }
@@ -66,13 +71,16 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .section h2 { margin-top: 0; }
 
 header.top { border-bottom: 1px solid var(--rule); }
+header.top .bar { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.brand { display: inline-flex; align-items: center; gap: 8px; font-size: 20px; color: var(--ink); text-decoration: none; letter-spacing: -0.01em; }
+.brand svg { width: 26px; height: 18px; overflow: visible; }
 header.top .wrap { padding-top: 14px; padding-bottom: 12px; display: flex; flex-direction: column; gap: 4px; }
 header.top nav { display: flex; flex-wrap: wrap; gap: 4px 14px; }
 header.top nav a { font-family: var(--font-sans); font-size: 13px; color: var(--muted); }
-header.top nav a[aria-current="page"] { color: var(--ink); text-decoration: none; }
-.name { font-size: 18px; }
+header.top nav a[aria-current="page"] { color: var(--accent); text-decoration: none; }
+.name { font-size: 15px; color: var(--muted); }
 
-textarea, input[type="text"], input[type="date"], select { width: 100%; font: inherit; color: var(--ink); background: #fff; border: 1px solid var(--rule); border-radius: 0; padding: 10px 12px; }
+textarea, input[type="text"], input[type="date"], select { width: 100%; font: inherit; color: var(--ink); background: var(--field); border: 1px solid var(--rule); border-radius: 0; padding: 10px 12px; }
 textarea { min-height: 120px; resize: vertical; }
 select, input[type="date"] { font-family: var(--font-sans); font-size: 15px; }
 label.control { display: block; padding: 12px 0; border-top: 1px solid var(--rule); }
@@ -85,7 +93,7 @@ label.control > span { display: block; margin-bottom: 6px; }
 .strike { text-decoration: line-through; color: var(--muted); }
 .changed { color: var(--accent); }
 
-.scrim { position: fixed; inset: 0; background: rgba(26, 26, 26, 0.4); z-index: 40; }
+.scrim { position: fixed; inset: 0; background: rgba(8, 11, 18, 0.6); z-index: 40; }
 .drawer { position: fixed; z-index: 50; background: var(--paper); overflow-y: auto; padding: 20px 24px 32px; left: 0; right: 0; bottom: 0; max-height: 86vh; border-top: 1px solid var(--ink); animation: up 180ms ease-out; }
 @media (min-width: 768px) { .drawer { left: auto; top: 0; bottom: 0; width: 460px; max-height: none; border-top: 0; border-left: 1px solid var(--ink); animation: in 180ms ease-out; } }
 @keyframes up { from { transform: translateY(24px); } to { transform: none; } }
@@ -94,7 +102,7 @@ label.control > span { display: block; margin-bottom: 6px; }
 .drawer h3 { font-family: var(--font-sans); font-size: 13px; font-weight: 500; color: var(--muted); margin: 18px 0 4px; letter-spacing: 0.02em; }
 .thumb { width: 72px; border: 1px solid var(--rule); display: block; }
 
-.letter { white-space: pre-wrap; font-size: 17px; background: #fff; border: 1px solid var(--rule); padding: 18px; }
+.letter { white-space: pre-wrap; font-size: 17px; color: var(--sheet-ink); background: var(--sheet); border: 1px solid var(--rule); padding: 18px; }
 .lettergrid { display: grid; grid-template-columns: 1fr; gap: 18px; }
 @media (min-width: 900px) { .wrap.wide .lettergrid { grid-template-columns: 1fr 1fr; } }
 
@@ -115,10 +123,10 @@ ol.steps > li > .item > span:first-child::before { content: counter(step) ". "; 
 .cite { background: none; border: 0; padding: 0; font-family: var(--font-sans); font-size: 13px; color: var(--muted); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 
 /* A drafted letter reads like a printed page. */
-.page { background: #fff; border: 1px solid var(--rule); box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08); padding: 28px 26px; white-space: pre-wrap; font-size: 17px; line-height: 1.55; }
+.page { background: var(--sheet); color: var(--sheet-ink); border: 1px solid var(--rule); box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08); padding: 28px 26px; white-space: pre-wrap; font-size: 17px; line-height: 1.55; }
 @media (min-width: 640px) { .page { padding: 40px 44px; } }
-.page .blank { background: var(--mark); padding: 0 2px; }
-textarea.page { width: 100%; min-height: 520px; resize: none; font-family: var(--font-serif); color: var(--ink); }
+.page .blank { background: #fff3b0; padding: 0 2px; }
+textarea.page { width: 100%; min-height: 520px; resize: none; font-family: var(--font-serif); color: var(--sheet-ink); background: var(--sheet); }
 .aid { border-left: 1px solid var(--rule); padding-left: 16px; white-space: pre-wrap; font-size: 15px; color: var(--ink); }
 
 /* Scenario controls read as lines of a form letter, not a settings panel. */

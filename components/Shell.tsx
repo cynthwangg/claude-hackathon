@@ -15,7 +15,13 @@ export function Shell({ id, lang, name, active, routeKind, mock, children, wide 
     <div lang={lang}>
       <header className="top">
         <div className="wrap">
-          <span className="name">{name ?? ""}</span>
+          <div className="bar">
+            <a className="brand" href="/landing.html" lang="en">
+              <svg viewBox="0 0 30 20" aria-hidden="true"><path d="M3 17 A12 12 0 0 1 27 17" fill="none" stroke="currentColor" strokeWidth="1.6" /><circle cx="3" cy="17" r="2.4" fill="currentColor" /><circle cx="27" cy="17" r="2.4" fill="var(--accent)" /></svg>
+              Bridge
+            </a>
+            <span className="name">{name ?? ""}</span>
+          </div>
           <nav aria-label="Sections">
             {items.map((k) => (
               <Link key={k} href={`/c/${id}/${k}`} aria-current={active === k ? "page" : undefined}>{t(lang, NAV_KEYS[k])}</Link>
