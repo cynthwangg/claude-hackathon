@@ -1,0 +1,226 @@
+<!doctype html>
+<!--
+Bridge landing page. Self-contained on purpose: it uses no app code, packages or styles, so it can sit
+in public/ without touching anything else. Next.js serves it at /landing.html.
+
+To connect it to the app later, keep the design as is and wire only these:
+  1. "Start with my documents" (a.btn). Create a case the way app/page.tsx does:
+     POST /api/cases with {"language": "en" | "es" | "zh"}, then go to /c/{case_id}.
+  2. "Message us on WhatsApp" (a.wa) and "Join their WhatsApp group" in the caption. Point them at the
+     WhatsApp number or group links from the whatsapp-integration branch.
+  3. The language links in the header (Español, 中文, Tagalog, Tiếng Việt). The app supports en, es, zh.
+     Store the choice in localStorage "earned.lang", which app/page.tsx already reads.
+  4. ORIG below holds placeholder schools and counts. Swap in real program data before showing real numbers.
+
+Palettes: ?p=passport (default), ?p=registrar, ?p=manila.
+Loads D3 7, topojson-client 3, world-atlas 2 and Google Fonts from CDNs.
+-->
+<html lang="en" data-p="passport">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bridge</title>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&family=Noto+Serif+SC:wght@400;500&family=Noto+Serif+KR:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root, [data-p="passport"] { --bg:#1a2130; --ink:#efe7d6; --muted:#9aa0ab; --rule:rgba(239,231,214,.14); --accent:#e0795c; --hl:rgba(224,121,92,.38); --soft:#c4c0b8; --globe:#202939; --land:#323c4f; --line:#efe7d6; --lo:.13; }
+  [data-p="registrar"] { --bg:#f5f0e4; --ink:#1d1a16; --muted:#6e675c; --rule:#dcd3c1; --accent:#a3341f; --hl:rgba(163,52,31,.2); --soft:#4a443c; --globe:#efe8d8; --land:#d9cfb9; --line:#1d1a16; --lo:.16; }
+  [data-p="manila"] { --bg:#eee4cb; --ink:#2a2219; --muted:#746750; --rule:#d6c7a2; --accent:#2f5a46; --hl:rgba(47,90,70,.22); --soft:#4f4536; --globe:#e7dcbf; --land:#d3c398; --line:#2a2219; --lo:.16; }
+  * { box-sizing:border-box; }
+  html,body { margin:0; height:100%; overflow:hidden; background:var(--bg); color:var(--ink); font-family:"Newsreader",Georgia,"Noto Serif SC","Noto Serif KR",serif; }
+  .page { height:100vh; display:grid; grid-template-rows:auto 1fr; }
+  .top { display:flex; justify-content:space-between; align-items:baseline; padding:18px 48px; border-bottom:1px solid var(--rule); }
+  .brand { display:flex; align-items:center; gap:10px; font-size:23px; letter-spacing:-.01em; color:var(--ink); text-decoration:none; }
+  .brand svg { width:30px; height:20px; overflow:visible; }
+  .top nav { font-size:17px; display:flex; gap:22px; }
+  .top nav a { color:var(--ink); text-underline-offset:3px; }
+  .main { display:grid; grid-template-columns: minmax(440px, 44%) 1fr; min-height:0; }
+  .left { padding:0 24px 0 48px; display:flex; flex-direction:column; justify-content:center; min-height:0; }
+  h1 { font-weight:400; font-size:clamp(32px, min(3.9vw, 6.3vh), 64px); line-height:1.06; letter-spacing:-.015em; margin:0 0 clamp(14px,2.6vh,26px); }
+  h1 .slot { display:inline-block; white-space:nowrap; transition:opacity .35s, transform .35s; }
+  h1 .slot.out { opacity:0; transform:translateY(.18em); }
+  h1 .w { color:var(--accent); font-style:italic; }
+  h1 .w:lang(zh), h1 .w:lang(ko) { font-style:normal; }
+  h1 .l1 { white-space:nowrap; }
+  h1 .here { display:block; margin-top:.12em; white-space:nowrap; }
+  .what mark { background:none; color:var(--ink); box-shadow:inset 0 -.36em 0 var(--hl); padding:0 .06em; }
+  .what { color:var(--soft); font-size:clamp(17px, 2.5vh, 21px); line-height:1.5; margin:0 0 clamp(18px,3.4vh,34px); max-width:500px; }
+  label { display:block; font-size:19px; color:var(--ink); margin-bottom:8px; }
+  .field { position:relative; z-index:5; width:min(460px, 100%); }
+  input { width:100%; font:inherit; font-size:19px; height:50px; padding:0 14px; border:1px solid var(--muted); border-radius:0; background:rgba(255,255,255,.04); color:var(--ink); outline:none; }
+  input:focus { border-color:var(--ink); }
+  input::placeholder { color:var(--muted); }
+  .sugg { position:absolute; left:0; right:0; top:100%; background:var(--bg); border:1px solid var(--rule); margin-top:4px; display:none; z-index:3; }
+  .sugg div { padding:8px 12px; cursor:pointer; font-size:17px; border-top:1px solid var(--rule); }
+  .sugg div:first-child { border-top:0; }
+  .sugg div:hover { background:var(--rule); }
+  .cta { margin:clamp(14px,2.2vh,20px) 0 0; display:flex; gap:12px; width:min(460px,100%); }
+  .btn, .wa { flex:1; display:flex; align-items:center; justify-content:center; height:50px; padding:0 16px; font-size:18px; text-decoration:none; white-space:nowrap; }
+  .btn { background:var(--accent); color:#1a1410; border:1px solid var(--accent); }
+  .btn:hover { filter:brightness(1.07); }
+  .wa { color:var(--ink); border:1px solid var(--ink); }
+  .wa:hover { background:var(--rule); }
+  .right { position:relative; display:grid; grid-template-rows:1fr auto; min-height:0; padding:clamp(12px,3vh,32px) 48px clamp(16px,3vh,30px) 0; }
+  .globe { position:relative; min-height:0; }
+  .globe svg { position:absolute; inset:0; width:100%; height:100%; cursor:grab; }
+  .globe svg:active { cursor:grabbing; }
+  .cap { display:flex; justify-content:space-between; align-items:baseline; gap:24px; border-top:1px solid var(--rule); padding-top:12px; font-size:18px; line-height:1.4; min-height:52px; }
+  .cap .txt { transition:opacity .3s; }
+  .cap .txt.out { opacity:0; }
+  .cap b { font-weight:400; color:var(--accent); }
+  .cap a { color:var(--accent); }
+  .cap .note { font-size:14px; color:var(--muted); white-space:nowrap; }
+  .lab { font-family:system-ui,sans-serif; font-size:11px; fill:var(--muted); pointer-events:none; }
+  .lab.on { fill:var(--accent); font-size:13px; }
+  .dest { font-family:system-ui,sans-serif; font-size:12px; fill:var(--ink); pointer-events:none; }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="top"><a class="brand" href="#"><svg viewBox="0 0 30 20" aria-hidden="true"><path d="M3 17 A12 12 0 0 1 27 17" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="3" cy="17" r="2.4" fill="currentColor"/><circle cx="27" cy="17" r="2.4" fill="var(--accent)"/></svg>Bridge</a><nav><a href="#">Español</a><a href="#" style="font-family:'Noto Serif SC',serif">中文</a><a href="#">Tagalog</a><a href="#">Tiếng Việt</a></nav></div>
+  <div class="main">
+    <div class="left">
+      <h1><span class="l1">You were a <span class="slot"><span class="w" id="w">teacher</span></span></span><br>in <span class="slot"><span id="c">Guadalajara</span></span>.<span class="here">You can be one here too.</span></h1>
+      <p class="what">Bridge helps women who trained abroad as <mark>teachers, nurses and social workers</mark> get <mark>licensed again in California</mark>. It reads the documents you already have and tells you exactly <mark>what is still missing</mark>, in your language.</p>
+      <label for="q">Where did you train?</label>
+      <div class="field"><input id="q" autocomplete="off" placeholder="Escuela Normal de Jalisco, 杭州师范大学"><div class="sugg" id="sugg"></div></div>
+      <div class="cta"><a class="btn" href="#">Start with my documents</a><a class="wa" href="#">Message us on WhatsApp</a></div>
+    </div>
+    <div class="right">
+      <div class="globe" id="globe"><svg id="svg"></svg></div>
+      <div class="cap"><span class="txt" id="cap"></span><span class="note">Counts are illustrative</span></div>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
+<script>
+const P = new URLSearchParams(location.search);
+if (P.get("p")) document.documentElement.dataset.p = P.get("p");
+const ORIG = [
+  {id:"jal", name:"Escuela Normal de Jalisco", city:"Guadalajara", ll:[-103.35,20.67], n:31, done:4, dest:{sj:12,la:9,fr:6,sa:4}},
+  {id:"benm", name:"Benemérita Escuela Nacional de Maestros", city:"Mexico City", ll:[-99.13,19.43], n:27, done:5, dest:{la:11,sd:7,sa:5,oak:4}},
+  {id:"edu", name:"Escuela Nacional para Maestras de Jardines de Niños", city:"Mexico City", ll:[-99.18,19.36], n:16, done:3, dest:{la:7,sa:5,fr:4}},
+  {id:"udg", name:"Universidad de Guadalajara, Enfermería", city:"Guadalajara", ll:[-103.38,20.70], n:14, done:4, dest:{fr:5,sal:5,la:4}},
+  {id:"oax", name:"Escuela Normal de Oaxaca", city:"Oaxaca", ll:[-96.72,17.06], n:14, done:2, dest:{fr:6,la:5,sal:3}},
+  {id:"hz", name:"杭州师范大学", en:"Hangzhou Normal University", city:"Hangzhou", ll:[120.15,30.27], n:12, done:3, dest:{sf:5,sj:4,la:3}},
+  {id:"bnu", name:"北京师范大学", en:"Beijing Normal University", city:"Beijing", ll:[116.40,39.90], n:18, done:6, dest:{sf:6,sj:5,la:4,sac:3}},
+  {id:"ecnu", name:"华东师范大学", en:"East China Normal University", city:"Shanghai", ll:[121.47,31.23], n:11, done:3, dest:{sf:5,la:6}},
+  {id:"ust", name:"University of Santo Tomas, College of Nursing", city:"Manila", ll:[120.99,14.61], n:46, done:19, dest:{la:14,sd:10,sf:9,sac:7,oak:6}},
+  {id:"pnu", name:"Philippine Normal University", city:"Manila", ll:[120.98,14.58], n:24, done:7, dest:{la:8,sd:6,sf:5,sac:5}},
+  {id:"hnue", name:"Đại học Sư phạm Hà Nội", en:"Hanoi National University of Education", city:"Hanoi", ll:[105.85,21.03], n:10, done:2, dest:{sa:6,sj:4}},
+  {id:"hcm", name:"Đại học Y Dược TP.HCM, Điều dưỡng", city:"Ho Chi Minh City", ll:[106.66,10.76], n:15, done:4, dest:{sa:8,sj:7}},
+  {id:"snu", name:"서울교육대학교", en:"Seoul National University of Education", city:"Seoul", ll:[126.98,37.57], n:9, done:2, dest:{la:6,sd:3}},
+  {id:"tw", name:"國立臺北護理健康大學", en:"National Taipei University of Nursing", city:"Taipei", ll:[121.51,25.12], n:8, done:3, dest:{sf:4,la:4}},
+  {id:"lag", name:"University of Lagos, Department of Nursing", city:"Lagos", ll:[3.38,6.52], n:21, done:6, dest:{la:7,oak:5,sac:5,sd:4}},
+  {id:"kyiv", name:"Київський університет імені Бориса Грінченка", en:"Borys Grinchenko Kyiv University", city:"Kyiv", ll:[30.52,50.45], n:11, done:2, dest:{sac:6,sf:5}},
+  {id:"tiss", name:"Tata Institute of Social Sciences", city:"Mumbai", ll:[72.88,19.08], n:10, done:3, dest:{sj:5,sf:3,la:2}},
+  {id:"jav", name:"Pontificia Universidad Javeriana, Enfermería", city:"Bogotá", ll:[-74.07,4.71], n:12, done:3, dest:{la:6,sd:3,sj:3}},
+  {id:"teh", name:"دانشگاه علامه طباطبائی", en:"Allameh Tabataba'i University", city:"Tehran", ll:[51.39,35.69], n:9, done:2, dest:{la:6,sj:3}},
+  {id:"ues", name:"Universidad de El Salvador, Trabajo Social", city:"San Salvador", ll:[-89.20,13.72], n:13, done:2, dest:{la:7,oak:6}},
+];
+const DEST = { sf:[-122.42,37.77], sj:[-121.89,37.34], oak:[-122.27,37.80], sac:[-121.49,38.58], fr:[-119.79,36.74], sal:[-121.66,36.68], la:[-118.24,34.05], sa:[-117.87,33.75], sd:[-117.16,32.72] };
+const CYCLE = [
+  {w:"teacher", id:"jal"}, {w:"nurse", id:"ust"}, {w:"social worker", id:"tiss"}, {w:"preschool teacher", id:"edu"},
+  {w:"teacher", id:"hz"}, {w:"nurse", id:"lag"}, {w:"teacher", id:"kyiv"}, {w:"social worker", id:"ues"},
+  {w:"nurse", id:"jav"}, {w:"teacher", id:"snu"}, {w:"school counselor", id:"teh"}, {w:"nurse", id:"hcm"},
+];
+const TOTAL = ORIG.reduce((s,o)=>s+o.n,0);
+const box = document.getElementById("globe"), svg = d3.select("#svg");
+let W = box.clientWidth, H = box.clientHeight;
+const rot = [172,-46,0];
+const proj = d3.geoOrthographic().rotate(rot).clipAngle(90).precision(.4);
+const fit = () => { W = box.clientWidth; H = box.clientHeight; proj.fitExtent([[8,8],[W-8,H-8]], {type:"Sphere"}); };
+fit();
+const path = d3.geoPath(proj);
+const gSphere = svg.append("path").datum({type:"Sphere"}).style("fill","var(--globe)").style("stroke","var(--rule)");
+const gGrat = svg.append("path").datum(d3.geoGraticule10()).style("fill","none").style("stroke","var(--rule)").attr("stroke-width",.5);
+const gLand = svg.append("path").style("fill","var(--land)");
+const gLines = svg.append("g").attr("fill","none"), gPts = svg.append("g"), gLab = svg.append("g");
+const lines = [];
+ORIG.forEach(o => Object.entries(o.dest).forEach(([k,c]) => { for (let i=0;i<c;i++) lines.push({o, f:{type:"LineString", coordinates:[o.ll, [DEST[k][0]+(Math.random()-.5)*.6, DEST[k][1]+(Math.random()-.5)*.6]]}}); }));
+d3.shuffle(lines);
+const L = gLines.selectAll("path").data(lines).join("path").style("stroke","var(--line)").style("stroke-opacity","var(--lo)").attr("stroke-width",.8);
+const seen = {};
+const PT = gPts.selectAll("circle").data(ORIG).join("circle").attr("r",2.6).style("fill","var(--ink)");
+const labs = ORIG.filter(o => !seen[o.city] && (seen[o.city]=1));
+const LB = gLab.selectAll("text").data(labs).join("text").attr("class","lab").text(d=>d.city);
+const DP = gPts.selectAll("rect").data(Object.values(DEST)).join("rect").attr("width",4).attr("height",4).style("fill","var(--accent)");
+const CA = gLab.append("text").attr("class","dest").text("California");
+const vis = ll => d3.geoDistance(ll, [-proj.rotate()[0], -proj.rotate()[1]]) < Math.PI/2 - .02;
+function render() {
+  gSphere.attr("d",path); gGrat.attr("d",path); if (window.land) gLand.attr("d",path(land));
+  L.attr("d", d=>path(d.f));
+  PT.attr("cx",d=>proj(d.ll)[0]).attr("cy",d=>proj(d.ll)[1]).attr("display",d=>vis(d.ll)?null:"none");
+  DP.attr("x",d=>proj(d)[0]-2).attr("y",d=>proj(d)[1]-2).attr("display",d=>vis(d)?null:"none");
+  LB.attr("x",d=>proj(d.ll)[0]+7).attr("y",d=>proj(d.ll)[1]+4).attr("display",d=>vis(d.ll)&&active&&d.city===active.city?null:"none");
+  const c = proj([-121,41.5]); CA.attr("x",c[0]+8).attr("y",c[1]).attr("display",vis([-121,41.5])?null:"none");
+}
+let active = null;
+function highlight(o) {
+  active = o;
+  L.style("stroke", d => o && d.o.id===o.id ? "var(--accent)" : "var(--line)")
+   .style("stroke-opacity", d => !o ? "var(--lo)" : d.o.id===o.id ? .95 : .07)
+   .attr("stroke-width", d => o && d.o.id===o.id ? 1.4 : .8);
+  if (o) L.filter(d=>d.o.id===o.id).raise();
+  LB.classed("on", d => o && d.city===o.city); render();
+}
+const cap = document.getElementById("cap");
+function caption(html) { cap.classList.add("out"); setTimeout(()=>{ cap.innerHTML = html; cap.classList.remove("out"); }, 250); }
+const capFor = (o, links) => `<b>${o.n}</b> women from ${o.name} live in California.<br>${o.done} are licensed again.${links?' <a href="#">Join their WhatsApp group</a>':''}`;
+
+d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json").then(world => {
+  window.land = topojson.feature(world, world.objects.land);
+  render();
+  L.each(function(){ const l=this.getTotalLength(); d3.select(this).attr("stroke-dasharray",`${l} ${l}`).attr("stroke-dashoffset",l); })
+   .transition().delay((d,i)=>200+i*5).duration(1500).ease(d3.easeCubicOut).attr("stroke-dashoffset",0)
+   .on("end", function(){ d3.select(this).attr("stroke-dasharray",null); });
+  cap.innerHTML = `<b>${TOTAL}</b> women who trained abroad already live in California. Drag the globe to look around.`;
+  setTimeout(startCycle, 2600);
+});
+svg.call(d3.drag().on("drag", e => {
+  const r = proj.rotate(), k = 70 / proj.scale();
+  L.interrupt().attr("stroke-dasharray",null).attr("stroke-dashoffset",null);
+  proj.rotate([r[0] + e.dx*k, Math.max(-60, Math.min(10, r[1] - e.dy*k)), 0]); render();
+}));
+window.addEventListener("resize", () => { fit(); render(); });
+
+const wEl = document.getElementById("w"), cEl = document.getElementById("c");
+let ci = 0, timer = null;
+const h1 = document.querySelector("h1"), l1 = document.querySelector("h1 .l1");
+function fitH1() {
+  h1.style.fontSize = ""; const cur = wEl.textContent;
+  let need = 0; [...new Set(CYCLE.map(c=>c.w))].forEach(w => { wEl.textContent = w; need = Math.max(need, l1.offsetWidth); });
+  wEl.textContent = cur;
+  const fs = parseFloat(getComputedStyle(h1).fontSize);
+  if (need > h1.clientWidth) h1.style.fontSize = (fs * h1.clientWidth / need * .98) + "px";
+}
+fitH1(); document.fonts.ready.then(fitH1); window.addEventListener("resize", fitH1);
+function show(i) {
+  const s = CYCLE[i], o = ORIG.find(x=>x.id===s.id);
+  const slots = document.querySelectorAll("h1 .slot");
+  slots.forEach(x=>x.classList.add("out"));
+  setTimeout(() => { wEl.textContent = s.w; cEl.textContent = o.city; slots.forEach(x=>x.classList.remove("out")); }, 300);
+  highlight(o); caption(capFor(o)); spinTo(o);
+}
+function startCycle() { stopCycle(); show(ci); timer = setInterval(() => { ci = (ci+1) % CYCLE.length; show(ci); }, 3600); }
+function stopCycle() { clearInterval(timer); timer = null; }
+
+const q = document.getElementById("q"), sugg = document.getElementById("sugg");
+function pick(o) { stopCycle(); highlight(o); caption(capFor(o, true)); spinTo(o); }
+function spinTo(o) {
+  const m = d3.geoInterpolate(o.ll, [-120,37])(.5), r0 = proj.rotate();
+  let lon = -m[0]; while (lon - r0[0] > 180) lon -= 360; while (lon - r0[0] < -180) lon += 360;
+  const ip = d3.interpolate(r0, [lon, Math.max(-62, Math.min(-25, -m[1] - 8)), 0]);
+  svg.transition("spin").duration(1400).ease(d3.easeCubicInOut).tween("r", () => t => { proj.rotate(ip(t)); render(); });
+}
+q.addEventListener("input", () => {
+  const v = q.value.trim().toLowerCase();
+  if (!v) { sugg.style.display="none"; startCycle(); return; }
+  const m = ORIG.filter(o => (o.name+" "+(o.en||"")+" "+o.city).toLowerCase().includes(v)).slice(0,5);
+  sugg.innerHTML = m.map(o=>`<div data-id="${o.id}">${o.name} <span style="color:var(--muted);font-size:14px">${o.city}</span></div>`).join("");
+  sugg.style.display = m.length>1?"block":"none"; if (m[0]) pick(m[0]);
+});
+sugg.addEventListener("click", e => { const d=e.target.closest("div[data-id]"); if(!d)return; const o=ORIG.find(x=>x.id===d.dataset.id); q.value=o.name; sugg.style.display="none"; pick(o); });
+</script>
+</body>
+</html>
