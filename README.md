@@ -23,8 +23,9 @@ California has a direct path for teachers trained abroad. Most women only find i
 2. Reads each document from a phone photo and shows exactly what it found, line by line
 3. Checks her case against **21 requirements taken word for word from the state's own pages**
 4. Shows what she has, what is missing, and what nobody can know yet
-5. Gives her one action for the week, with the letter already written
-6. Keeps one case across WhatsApp and the web, so she can talk on her phone and handle paperwork on a bigger screen
+5. Turns it into **a plan**, the deadline, the first thing to do with the letter already written, and what comes after
+6. Connects her with **women who trained at the same school** through a WhatsApp group
+7. Keeps one case across WhatsApp and the web, so she can talk on her phone and handle paperwork on a bigger screen
 
 ## How we decided to build it
 
@@ -41,10 +42,11 @@ Mariana taught primary school in Guadalajara for ten years. She applied in Calif
 1. She taps Message us on WhatsApp on the Bridge page
 2. She tells her story in one message and gets a link to start
 3. She uploads her documents one at a time, and each request explains what the document is
-4. She learns her report is the wrong type, and that **her transcript already shows her student teaching**
-5. She gets one task for the week, with the letter written and the deadline counted
+4. She lands on her plan, with the days left on her deadline and the first thing to do, letter already written
+5. She sees where she stands. Her report is the wrong type, and **her transcript already shows her student teaching**
 6. She taps any line to see the official sentence behind it
-7. She keeps asking questions on WhatsApp, about her case, jobs she could do now, or her resume
+7. She joins a WhatsApp group of women from her program who are going through the same thing
+8. She keeps asking questions on WhatsApp, about her case, jobs she could do now, or her resume
 
 ## Tech
 
