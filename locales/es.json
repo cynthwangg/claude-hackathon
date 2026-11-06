@@ -88,7 +88,7 @@
   "docs.continue": "Ver dónde estás",
   "docs.none_left": "Eso es todo lo que te pedí. Puedes agregar cualquier otra cosa abajo.",
   "docs.skipped": "Saltado",
-  "docs.letter_deadline_note": "La CTC cuenta 60 días desde la fecha de la carta (página Check Application Status). Ese número no se edita aquí.",
+  "docs.letter_deadline_note": "La CTC cuenta los 60 días desde la fecha de la carta.",
   "docs.reading_aid": "Traducción de apoyo, no oficial",
   "docs.injection": "Esta página contiene texto dirigido a una computadora. Se copió, no se siguió.",
   "docs.not_found": "No lo encontré en el documento",
@@ -481,5 +481,17 @@
   "wa.thanks": "Gracias.",
   "wa.handoff": "Te puedo ayudar a obtener otra vez tu licencia aquí.\n\nAsí funciona. Me muestras los documentos que ya tienes, como tu título, tu certificado de estudios, tu licencia de tu país o cualquier carta que te haya mandado una oficina. Te los pido uno por uno y te explico qué es cada uno.\n\nDespués verás lo que ya tienes, lo que todavía falta y qué hacer esta semana.\n\nEmpieza aquí\n{url}",
   "docs.got_it": "Listo, leí {noun}.",
-  "week.upload_evaluation.why": "El reporte que ya tienes decide el siguiente paso. Lo leo y te digo si es del tipo que acepta la CTC."
+  "week.upload_evaluation.why": "El reporte que ya tienes decide el siguiente paso. Lo leo y te digo si es del tipo que acepta la CTC.",
+  "nav.circle": "Comunidad",
+  "nav.home": "Tu plan",
+  "plan.title": "{name}, este es tu plan.",
+  "plan.title_noname": "Este es tu plan.",
+  "plan.now": "Haz esto primero",
+  "plan.next": "Después",
+  "plan.did": "Ya hecho por ti",
+  "plan.see_all": "Ver todo lo que tienes y lo que falta",
+  "plan.people": "Conecta con mujeres que estudiaron donde tú",
+  "plan.join_group": "Únete al grupo de WhatsApp",
+  "plan.chat_here": "O habla aquí en Bridge",
+  "docs.to_plan": "Ver tu plan"
 }

@@ -33,7 +33,10 @@ for (const [lang, d, langLabel] of [["es", es as Dict, "Español"], ["en", en as
     await expect(page.locator(".mark", { hasText: "Trabajo Docente II" }).first()).toBeVisible();
     await page.reload();
     await expect(page.getByText(tt(d, "docs.hydrated"))).toBeVisible();
-    await page.getByRole("link", { name: tt(d, "docs.continue") }).click();
+    // Uploads lead to her plan; where she stands is one click from the top bar.
+    await page.getByRole("link", { name: tt(d, "docs.to_plan") }).click();
+    await expect(page.getByRole("heading", { name: tt(d, "plan.title", { name: "Mariana" }) })).toBeVisible();
+    await page.getByRole("link", { name: tt(d, "nav.where") }).first().click();
 
     // 6.4 position, the practicum is paperwork
     await expect(page.getByRole("heading", { name: tt(d, "position.header", { name: "Mariana" }) })).toBeVisible();

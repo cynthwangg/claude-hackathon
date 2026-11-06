@@ -137,3 +137,45 @@ label.control select, label.control input[type="date"] { font-family: var(--font
 .link.sans { font-family: var(--font-sans); font-size: 17px; }
 .turn.her { color: var(--ink); font-style: italic; border-left: 1px solid var(--rule); padding-left: 16px; }
 :lang(zh) .turn.her { font-style: normal; }
+
+/* The document to upload now sits in its own box, so it is obvious what to do next. */
+.ask { border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent); border-radius: 16px; padding: 22px 20px 24px; background: color-mix(in srgb, var(--accent) 7%, transparent); margin-top: 20px; }
+@media (min-width: 640px) { .ask { padding: 26px 30px 28px; } }
+
+/* Laptop. Wider content, header across the whole page, Bridge on the left and the sections on the right. */
+@media (min-width: 1024px) {
+  .wrap, .wrap.wide { max-width: 1040px; padding: 0 48px 80px; }
+  main.wrap p { max-width: 72ch; }
+  header.top .wrap { max-width: none; padding: 16px 48px 0; flex-direction: row; align-items: flex-end; justify-content: space-between; gap: 40px; }
+  header.top .bar { justify-content: flex-start; gap: 18px; padding-bottom: 14px; }
+  header.top nav { overflow: visible; }
+  .askgrid { grid-template-columns: 180px 1fr; gap: 28px; }
+  .example { max-width: 180px; }
+  .docgrid { grid-template-columns: 360px 1fr; gap: 36px; }
+}
+
+/* The journey in the top bar reads as numbered steps. */
+header.top nav .step { display: inline-block; min-width: 1.4em; height: 1.4em; line-height: 1.4em; margin-right: 8px; border: 1px solid var(--rule); border-radius: 50%; text-align: center; font-size: 0.75em; color: var(--muted); }
+header.top nav a[aria-current="page"] .step { border-color: var(--accent); color: var(--accent); }
+header.top nav .navgap { width: 1px; align-self: stretch; margin: 4px 4px 12px; background: var(--rule); flex: none; }
+
+/* Her plan. Priorities on the left, the community beside them on a laptop. */
+.plan { display: grid; grid-template-columns: 1fr; gap: 32px; margin-top: 8px; }
+@media (min-width: 1024px) { .plan { grid-template-columns: minmax(0, 1fr) 320px; gap: 48px; align-items: start; } }
+.plan h1 { margin-bottom: 20px; }
+.plan section { margin-top: 32px; }
+.alert { border-left: 2px solid var(--accent); padding: 4px 0 4px 16px; }
+.alert p { margin: 0; font-size: 19px; }
+.now { border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent); border-radius: 16px; padding: 22px 26px 24px; background: color-mix(in srgb, var(--accent) 7%, transparent); }
+.now h2 { margin-top: 4px; }
+.checklist { list-style: none; counter-reset: todo; margin: 0; padding: 0; }
+.checklist li { counter-increment: todo; display: flex; justify-content: space-between; gap: 16px; align-items: baseline; padding: 12px 0; border-top: 1px solid var(--rule); }
+.checklist li > span::before { content: counter(todo); display: inline-block; width: 1.6em; height: 1.6em; line-height: 1.6em; margin-right: 12px; border: 1px solid var(--rule); border-radius: 50%; text-align: center; font-size: 0.8em; color: var(--muted); }
+.donelist { list-style: none; margin: 0; padding: 0; }
+.donelist li { padding: 8px 0 8px 24px; border-top: 1px solid var(--rule); position: relative; color: var(--muted); }
+.donelist li::before { content: ""; position: absolute; left: 4px; top: 50%; width: 8px; height: 8px; margin-top: -4px; border-radius: 50%; background: var(--accent); }
+.sidecard { border: 1px solid var(--rule); border-radius: 16px; padding: 22px 24px; background: var(--field); }
+@media (min-width: 1024px) { .sidecard { position: sticky; top: 24px; margin-top: 8px; } }
+.sidecard h2 { margin-top: 2px; }
+.sidecard .btn { display: block; text-align: center; margin-top: 16px; }
+.sidecard hr { border: 0; border-top: 1px solid var(--rule); margin: 18px 0 14px; }

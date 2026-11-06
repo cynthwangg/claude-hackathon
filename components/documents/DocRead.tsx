@@ -45,8 +45,14 @@ function splitExtra(v: unknown): [string, string] {
   return i > 0 ? [str.slice(0, i), str.slice(i + 3)] : ["", str];
 }
 
-function Quote({ f, lang, docLang }: { f: Fact; lang: Lang; docLang: string | null }) {
+/** Letters and digits only, so "RE: Returned for Additional Information" and "Returned for Additional Information" compare equal enough. */
+const bare = (x: string) => x.toLowerCase().normalize("NFKD").replace(/[^\p{L}\p{N}]/gu, "");
+
+/** The quote only shows when it adds something, not when it repeats the value word for word. */
+function Quote({ f, lang, docLang, shown }: { f: Fact; lang: Lang; docLang: string | null; shown: string }) {
   if (!f.original_text) return null;
+  const q = bare(f.original_text), v = bare(shown);
+  if (v && (q === v || ((q.includes(v) || v.includes(q)) && Math.abs(q.length - v.length) <= 12))) return null;
   return (
     <div className={`quote ${s.quote}`}>
       <span lang={docLang ?? undefined}>“{f.original_text}”</span>
@@ -101,7 +107,7 @@ function FactRow({ f, lang, docLang, editing, onChanged }: { f: Fact; lang: Lang
       ) : (
         <div className={f.key === "ctc_letter.items" ? s.pre : undefined}><span className="label">{label}</span>{shown}</div>
       )}
-      {f.key !== "ctc_letter.items" && <Quote f={f} lang={lang} docLang={docLang} />}
+      {f.key !== "ctc_letter.items" && <Quote f={f} lang={lang} docLang={docLang} shown={shown} />}
       {f.key === "ctc_letter.deadline_days" && <div className="micro">{t(lang, "docs.letter_deadline_note")}</div>}
     </div>
   );

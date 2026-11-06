@@ -59,7 +59,7 @@ export default function CirclePage() {
 
   if (!v.ready) {
     return (
-      <Shell id={id} lang={lang} name={header.name} routeKind={header.route_kind} mock={header.mock}>
+      <Shell id={id} lang={lang} name={header.name} active="circle" routeKind={header.route_kind} mock={header.mock}>
         <section className="section first"><p className="muted">{say(lang, "circle.not_ready")}</p>{back}</section>
       </Shell>
     );
@@ -68,7 +68,7 @@ export default function CirclePage() {
   const time = (iso: string) => new Date(iso).toLocaleTimeString(lang === "zh" ? "zh-CN" : lang, { hour: "2-digit", minute: "2-digit" });
 
   return (
-    <Shell id={id} lang={lang} name={header.name} routeKind={header.route_kind} mock={header.mock}>
+    <Shell id={id} lang={lang} name={header.name} active="circle" routeKind={header.route_kind} mock={header.mock}>
       <section className="section first">
         <h1 style={{ marginTop: 0 }}>{v.title}</h1>
         {v.count_line && <p className="small">{v.count_line}</p>}

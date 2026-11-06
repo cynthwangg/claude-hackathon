@@ -217,7 +217,7 @@
   "why.live_not_found": "网页在我们读取之后有变化。依赖这条规则之前需要有人复核。",
   "why.live_failed": "现在打不开 CTC 的网页。引文读取于 {date}。",
   "why.statement": "你自己的回答",
-  "docs.letter_deadline_note": "CTC 从来信日期起算 60 天（Check Application Status 页面）。这个数字在这里不能修改。",
+  "docs.letter_deadline_note": "CTC 从来信日期起算 60 天。",
   "docs.not_found": "文件里没有找到",
   "wa.send_photo": "也可以直接在这里发照片或 PDF。",
   "wa.upload": "你可以在这里上传\n{url}",
@@ -289,5 +289,17 @@
   "wa.thanks": "谢谢你。",
   "wa.handoff": "我可以帮你在这里重新拿到执照。\n\n是这样进行的。你把手上已有的文件给我看，比如毕业证、成绩单、本国的执照，或者任何机构寄给你的信。我会一份一份地请你上传，并解释每一份是什么。\n\n之后你会看到你已经有什么、还缺什么，以及这周该做什么。\n\n从这里开始\n{url}",
   "docs.got_it": "好的，{noun}我读完了。",
-  "week.upload_evaluation.why": "你手上已有的报告决定下一步。我会读它，并告诉你它是不是 CTC 接受的那种。"
+  "week.upload_evaluation.why": "你手上已有的报告决定下一步。我会读它，并告诉你它是不是 CTC 接受的那种。",
+  "nav.circle": "社区",
+  "nav.home": "你的计划",
+  "plan.title": "{name}，这是你的计划。",
+  "plan.title_noname": "这是你的计划。",
+  "plan.now": "先做这个",
+  "plan.next": "然后",
+  "plan.did": "已经帮你做好的",
+  "plan.see_all": "查看你已有的和还缺的",
+  "plan.people": "认识和你在同一所学校受训的女性",
+  "plan.join_group": "加入 WhatsApp 群",
+  "plan.chat_here": "或者在 Bridge 里聊",
+  "docs.to_plan": "查看你的计划"
 }

@@ -96,7 +96,7 @@ export default function Documents() {
         reading={reading}
         note={note}
         err={err}
-        continueHref={`/c/${id}/position`}
+        continueHref={`/c/${id}/home`}
         onFile={(f) => current && upload(f, current)}
         onSkip={() => current && skip(current)}
       />

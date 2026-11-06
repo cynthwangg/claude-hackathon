@@ -36,7 +36,7 @@ export function RequestBlock({ lang, current, heading, example, reading, note, e
         <p className="small">{t(lang, "docs.none_left")}</p>
         {status}
         <div className={s.after}>
-          <Link className="btn" href={continueHref}>{t(lang, "docs.continue")}</Link>
+          <Link className="btn" href={continueHref}>{t(lang, "docs.to_plan")}</Link>
         </div>
       </section>
     );
@@ -67,7 +67,7 @@ export function RequestBlock({ lang, current, heading, example, reading, note, e
         body
       )}
       <p className={`sans ${s.after}`}>
-        <Link href={continueHref}>{t(lang, "docs.continue")}</Link>
+        <Link href={continueHref}>{t(lang, "docs.to_plan")}</Link>
       </p>
     </section>
   );

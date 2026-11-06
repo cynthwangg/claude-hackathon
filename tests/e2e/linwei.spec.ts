@@ -24,7 +24,8 @@ test("Lin Wei in Mandarin on the partial route (D23, D24)", async ({ page }) => 
     await expect(page.getByText(tt("docs.header", { noun: tt(noun) })).first()).toBeVisible({ timeout: 30_000 });
   }
   await expect(page.locator(".mark", { hasText: "教育实习" }).first()).toBeVisible();
-  await page.getByRole("link", { name: tt("docs.continue") }).click();
+  await page.getByRole("link", { name: tt("docs.to_plan") }).click();
+  await page.getByRole("link", { name: tt("nav.where") }).first().click();
 
   await expect(page.getByRole("heading", { name: tt("position.header", { name: "林薇" }) })).toBeVisible();
   const main = page.locator("main");

@@ -6,11 +6,16 @@ import type { Lang } from "@/rules/types";
 
 type Props = { id: string; lang: Lang; name: string | null; active?: string; routeKind?: string; mock?: boolean; children: React.ReactNode; wide?: boolean };
 
-const NAV_DEEP = ["position", "documents", "route", "week", "progress", "ask"] as const;
-const NAV_KEYS: Record<string, string> = { position: "nav.where", documents: "nav.documents", route: "nav.route", week: "nav.week", progress: "nav.progress", ask: "nav.ask", change: "nav.change" };
+/** Her journey, in order, numbered in the top bar. The other sections follow as plain links. */
+const JOURNEY_DEEP = ["documents", "home", "position", "progress"] as const;
+const JOURNEY_NONE = ["documents", "home", "position"] as const;
+const MORE_DEEP = ["week", "route", "ask", "change"] as const;
+const MORE_NONE = ["ask"] as const;
+const NAV_KEYS: Record<string, string> = { position: "nav.where", documents: "nav.documents", route: "nav.route", week: "nav.week", progress: "nav.progress", home: "nav.home", circle: "nav.circle", ask: "nav.ask", change: "nav.change" };
 
 export function Shell({ id, lang, name, active, routeKind, mock, children, wide }: Props) {
-  const items = routeKind === "none" ? (["position", "documents", "ask"] as const) : NAV_DEEP;
+  const journey = routeKind === "none" ? JOURNEY_NONE : JOURNEY_DEEP;
+  const more = routeKind === "none" ? MORE_NONE : MORE_DEEP;
   return (
     <div lang={lang}>
       <header className="top">
@@ -23,10 +28,13 @@ export function Shell({ id, lang, name, active, routeKind, mock, children, wide 
             <span className="name">{name ?? ""}</span>
           </div>
           <nav aria-label="Sections">
-            {items.map((k) => (
+            {journey.map((k, i) => (
+              <Link key={k} href={`/c/${id}/${k}`} aria-current={active === k ? "page" : undefined}><span className="step" aria-hidden="true">{i + 1}</span>{t(lang, NAV_KEYS[k])}</Link>
+            ))}
+            <span className="navgap" aria-hidden="true" />
+            {more.map((k) => (
               <Link key={k} href={`/c/${id}/${k}`} aria-current={active === k ? "page" : undefined}>{t(lang, NAV_KEYS[k])}</Link>
             ))}
-            {routeKind !== "none" && <Link href={`/c/${id}/change`} aria-current={active === "change" ? "page" : undefined}>{t(lang, NAV_KEYS.change)}</Link>}
           </nav>
         </div>
       </header>

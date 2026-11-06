@@ -91,7 +91,7 @@
   "docs.continue": "See where you stand",
   "docs.none_left": "That's everything I asked for. You can add anything else below.",
   "docs.skipped": "Skipped",
-  "docs.letter_deadline_note": "The CTC counts 60 days from the letter date (Check Application Status page). That number isn't edited here.",
+  "docs.letter_deadline_note": "The CTC counts the 60 days from the letter date.",
   "docs.reading_aid": "Unofficial reading aid",
   "docs.injection": "This page contains text addressed to a computer. It was copied, not followed.",
   "docs.not_found": "I didn't find this on the page",
@@ -485,5 +485,17 @@
   "wa.thanks": "Thanks.",
   "wa.handoff": "I can help you get licensed again here.\n\nHere's how it works. You show me the documents you already have, like your diploma, your transcript, your license from home, or any letter an office sent you. I'll ask for them one at a time and explain what each one is.\n\nThen you'll see what you already have, what's still missing, and what to do this week.\n\nStart here\n{url}",
   "docs.got_it": "Got it, I read {noun}.",
-  "week.upload_evaluation.why": "The report you already have decides the next step. I read it and tell you whether it's the kind the CTC accepts."
+  "week.upload_evaluation.why": "The report you already have decides the next step. I read it and tell you whether it's the kind the CTC accepts.",
+  "nav.circle": "Community",
+  "nav.home": "Your plan",
+  "plan.title": "{name}, here's your plan.",
+  "plan.title_noname": "Here's your plan.",
+  "plan.now": "Do this first",
+  "plan.next": "Then",
+  "plan.did": "Already done for you",
+  "plan.see_all": "See everything you have and still need",
+  "plan.people": "Connect with women who trained where you did",
+  "plan.join_group": "Join the WhatsApp group",
+  "plan.chat_here": "Or talk here in Bridge",
+  "docs.to_plan": "See your plan"
 }

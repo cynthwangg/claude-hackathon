@@ -64,75 +64,71 @@ export default function Home() {
   };
 
   return (
-    <Shell id={id} lang={lang} name={header.name} routeKind={header.route_kind} mock={header.mock}>
-      <section className="section first">
-        <h1 style={{ marginTop: 0 }}>{header.name ? say(lang, "portal.title", { name: header.name }) : say(lang, "portal.title_noname")}</h1>
-        <p className="small">{data.connected.whatsapp ? say(lang, "portal.saved_wa", { last4: data.connected.whatsapp }) : say(lang, "portal.saved_web")}</p>
-        <a className="link sans" href={data.wa_link} target="_blank" rel="noreferrer">{say(lang, data.connected.whatsapp ? "portal.open_wa" : "portal.connect_wa")}</a>
-      </section>
+    <Shell id={id} lang={lang} name={header.name} active="home" routeKind={header.route_kind} mock={header.mock}>
+      <div className="plan">
+        <div className="planmain">
+          <h1>{header.name ? t(lang, "plan.title", { name: header.name }) : t(lang, "plan.title_noname")}</h1>
 
-      <section className="section">
-        <h2>{say(lang, "portal.since")}</h2>
-        {data.since.length ? data.since.map((s) => <p key={s}>{s}</p>) : <p className="muted">{say(lang, "portal.nothing_new")}</p>}
-      </section>
+          {data.since.length > 0 && <div className="alert">{data.since.map((x) => <p key={x}>{x}</p>)}</div>}
 
-      {week && (
-        <section className="section">
-          <h2>{say(lang, "portal.week")}</h2>
-          <p style={{ marginBottom: 4 }}>{week.headline.text}</p>
-          <p className="small muted">{week.headline.why}</p>
-          {week.why_now && <p className="small">{week.why_now}</p>}
-          <div className="row">
-            {week.headline.has_draft
-              ? <Link className="btn" href={`/c/${id}/letter/${week.headline.kind}`}>{t(lang, `draft.${week.headline.kind}`)}</Link>
-              : <Link className="btn" href={`/c/${id}/week`}>{t(lang, "nav.week")}</Link>}
-          </div>
-          {week.also.length > 0 && (
-            <>
-              <p className="label" style={{ marginTop: 18 }}>{say(lang, "portal.also")}</p>
-              {week.also.map((s) => (
-                <div key={s.kind} className="item small">
-                  <span>{s.text}</span>
-                  {s.has_draft && <Link className="link sans" href={`/c/${id}/letter/${s.kind}`}>{t(lang, `draft.${s.kind}`)}</Link>}
-                </div>
-              ))}
-            </>
-          )}
-        </section>
-      )}
-
-      {data.did.length > 0 && (
-        <section className="section">
-          <h2>{say(lang, "portal.did")}</h2>
-          {data.did.map((d) => <div key={d} className="item small"><span>{d}</span></div>)}
-        </section>
-      )}
-
-      <section className="section">
-        <h2>{say(lang, "portal.people")}</h2>
-        {cm.state === "none" && <p className="small muted">{say(lang, "portal.people.unknown")}</p>}
-        {cm.count_line && <p>{cm.count_line}</p>}
-
-        {cm.state !== "none" && cm.group_name && (
-          <>
-            {cm.state === "open" && <p className="small" style={{ marginTop: 12 }}>{say(lang, "portal.choose")}</p>}
-            <div className="item small" style={{ display: "block" }}>
-              <p style={{ marginBottom: 4 }}>{say(lang, "portal.chat_option")}</p>
-              {cm.chat_joined
-                ? <Link className="link sans" href={cm.circle_url}>{say(lang, "portal.open_circle")}</Link>
-                : <button className="link sans" disabled={busy} onClick={() => act("chat_join", cm.circle_url)}>{say(lang, "portal.chat_button")}</button>}
-            </div>
-            {cm.group_link && (
-              <div className="item small" style={{ display: "block" }}>
-                <p style={{ marginBottom: 4 }}>{say(lang, "portal.group_option", { name: cm.group_name })}</p>
-                <a className="link sans" href={cm.group_link} target="_blank" rel="noreferrer" onClick={() => { if (!cm.in_group) act("group"); }}>{say(lang, "portal.group_button")}</a>
+          {week && (
+            <section className="now">
+              <p className="label">{t(lang, "plan.now")}</p>
+              <h2>{week.headline.text}</h2>
+              <p className="muted small">{week.headline.why}</p>
+              <div className="row">
+                {week.headline.has_draft
+                  ? <Link className="btn" href={`/c/${id}/letter/${week.headline.kind}`}>{t(lang, `draft.${week.headline.kind}`)}</Link>
+                  : <Link className="btn" href={`/c/${id}/week`}>{t(lang, "nav.week")}</Link>}
               </div>
-            )}
-            {cm.state === "joined" && <div className="row sans"><button className="link muted" disabled={busy} onClick={() => act("leave")}>{say(lang, "portal.leave")}</button></div>}
-          </>
-        )}
-        {cm.synthetic && cm.count_line && <p className="micro" style={{ marginTop: 12 }}>{say(lang, "portal.synthetic")}</p>}
-      </section>
+            </section>
+          )}
+
+          {week && week.also.length > 0 && (
+            <section>
+              <h2>{t(lang, "plan.next")}</h2>
+              <ol className="checklist">
+                {week.also.map((x) => (
+                  <li key={x.kind}>
+                    <span>{x.text}</span>
+                    {x.has_draft && <Link className="link sans" href={`/c/${id}/letter/${x.kind}`}>{t(lang, `draft.${x.kind}`)}</Link>}
+                  </li>
+                ))}
+              </ol>
+            </section>
+          )}
+
+          {data.did.length > 0 && (
+            <section>
+              <h2>{t(lang, "plan.did")}</h2>
+              <ul className="donelist">{data.did.map((d) => <li key={d}>{d}</li>)}</ul>
+            </section>
+          )}
+
+          <p className="sans" style={{ marginTop: 28 }}><Link href={`/c/${id}/position`}>{t(lang, "plan.see_all")}</Link></p>
+        </div>
+
+        <aside className="sidecard" aria-labelledby="people">
+          <p className="label">{t(lang, "nav.circle")}</p>
+          <h2 id="people">{t(lang, "plan.people")}</h2>
+          {cm.state === "none" && <p className="small muted">{say(lang, "portal.people.unknown")}</p>}
+          {cm.count_line && <p className="small">{cm.count_line}</p>}
+          {cm.state !== "none" && cm.group_link && (
+            <a className="btn" href={cm.group_link} target="_blank" rel="noreferrer" onClick={() => { if (!cm.in_group) act("group"); }}>{t(lang, "plan.join_group")}</a>
+          )}
+          {cm.state !== "none" && (
+            <p className="sans small" style={{ marginTop: 14 }}>
+              {cm.chat_joined
+                ? <Link href={cm.circle_url}>{say(lang, "portal.open_circle")}</Link>
+                : <button className="link" disabled={busy} onClick={() => act("chat_join", cm.circle_url)}>{t(lang, "plan.chat_here")}</button>}
+            </p>
+          )}
+          {cm.state === "joined" && <p className="sans small"><button className="link muted" disabled={busy} onClick={() => act("leave")}>{say(lang, "portal.leave")}</button></p>}
+          {cm.synthetic && cm.count_line && <p className="micro">{say(lang, "portal.synthetic")}</p>}
+          <hr />
+          <a className="link sans small" href={data.wa_link} target="_blank" rel="noreferrer">{say(lang, data.connected.whatsapp ? "portal.open_wa" : "portal.connect_wa")}</a>
+        </aside>
+      </div>
     </Shell>
   );
 }
