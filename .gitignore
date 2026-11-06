@@ -14,6 +14,7 @@ test.py
 
 # private notes and spec, not published
 *.md
+!README.md
 docs/
 gate.db*
 prisma/*.db*
