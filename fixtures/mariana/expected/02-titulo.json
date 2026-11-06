@@ -1,0 +1,7 @@
+{ "kind": "degree", "language": "es", "facts": [
+  { "key": "degree.present", "value": true, "original_text": "TÍTULO", "page": 1 },
+  { "key": "degree.title", "value": "Licenciada en Educación Primaria", "original_text": "LICENCIADA EN EDUCACIÓN PRIMARIA", "page": 1 },
+  { "key": "degree.institution", "value": "Escuela Normal de Educación Primaria del Estado de Jalisco", "original_text": "ESCUELA NORMAL DE EDUCACIÓN PRIMARIA DEL ESTADO DE JALISCO", "page": 1 },
+  { "key": "degree.date", "value": "2010-11-15", "original_text": "15 de noviembre de 2010", "page": 1 },
+  { "key": "degree.holder_name", "value": "Mariana Ortega Villaseñor", "original_text": "MARIANA ORTEGA VILLASEÑOR", "page": 1 }
+] }

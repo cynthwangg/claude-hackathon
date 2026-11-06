@@ -1,0 +1,10 @@
+{ "kind": "evaluation_report", "language": "en", "facts": [
+  { "key": "evaluation.present", "value": true, "original_text": "CREDENTIAL EVALUATION REPORT", "page": 1 },
+  { "key": "evaluation.agency_name", "value": "Educational Credential Evaluators, Inc.", "original_text": "Educational Credential Evaluators, Inc.", "page": 1 },
+  { "key": "evaluation.report_date", "value": "2026-03-10", "original_text": "March 10, 2026", "page": 1 },
+  { "key": "evaluation.report_type", "value": "document_by_document", "original_text": "Report type: Document-by-Document", "page": 2 },
+  { "key": "evaluation.us_equivalency_statement", "value": "Bachelor's degree, Elementary Education", "original_text": "U.S. Equivalency: Bachelor's degree, Elementary Education", "page": 1 },
+  { "key": "evaluation.lists_courses", "value": false, "original_text": "This report does not include a course-by-course analysis.", "page": 2 },
+  { "key": "evaluation.mentions_student_teaching", "value": false, "original_text": "", "page": 2 },
+  { "key": "evaluation.documents_reviewed", "value": ["Título", "Certificado de estudios"], "original_text": "Documents reviewed: Título, Certificado de estudios", "page": 1 }
+] }

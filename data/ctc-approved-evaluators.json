@@ -1,0 +1,29 @@
+{
+  "source_url": "https://www.ctc.ca.gov/aspiring-educators/transcripts/foreign-transcript-eval/",
+  "retrieved_on": "2026-11-05",
+  "agencies": [
+    { "id": "apie", "name": "Academic & Professional International Evaluations, Inc.", "short": "APIE", "aliases": ["APIE"], "website": "" },
+    { "id": "acei", "name": "Academic Credentials Evaluation Institute, Inc.", "short": "ACEI", "aliases": ["ACEI"], "website": "https://www.acei-global.org/" },
+    { "id": "acrevs", "name": "Academic & Credential Records, Evaluation & Verification Services", "short": "ACREVS", "aliases": ["ACREVS"], "website": "" },
+    { "id": "alianza", "name": "Alianza Academic Evaluations", "short": "Alianza", "aliases": ["Alianza", "Arizona International Credential Evaluators"], "website": "" },
+    { "id": "caree", "name": "Center for Applied Research, Evaluation, and Education, Inc.", "short": "CAREE", "aliases": ["CAREE", "IESCAREE"], "website": "" },
+    { "id": "ece", "name": "Educational Credential Evaluators, Inc.", "short": "ECE", "aliases": ["ECE"], "website": "https://www.ece.org/" },
+    { "id": "eres", "name": "Educational Records Evaluation Service", "short": "ERES", "aliases": ["ERES"], "website": "" },
+    { "id": "facs", "name": "Foreign Academic Credentials Service, Inc.", "short": "FACS", "aliases": ["FACS"], "website": "" },
+    { "id": "fcsa", "name": "Foreign Credential Services of America", "short": "FCSA", "aliases": ["FCSA"], "website": "" },
+    { "id": "fcsa-west", "name": "Foreign Credential Services of America West", "short": "FCSA-West", "aliases": ["FCSA-WEST", "FCSA West"], "website": "" },
+    { "id": "ifcs", "name": "Institute of Foreign Credential Services", "short": "IFCS", "aliases": ["IFCS"], "website": "" },
+    { "id": "iee", "name": "International Education Evaluations, Inc.", "short": "IEE", "aliases": ["IEE"], "website": "" },
+    { "id": "ierf", "name": "International Education Research Foundation, Inc.", "short": "IERF", "aliases": ["IERF"], "website": "https://www.ierf.org/", "order_note": "Request a Detailed Report. On an IERF's application, Section 2, please check the following: 1) Professional Licensing/Certification. Field: Teaching, State: CA." },
+    { "id": "silny", "name": "Josef Silny & Associates, Inc.", "short": "Josef Silny", "aliases": ["Josef Silny", "JS&A", "Silny"], "website": "" },
+    { "id": "scholaro", "name": "Scholaro Inc.", "short": "Scholaro", "aliases": ["Scholaro"], "website": "https://www.scholaro.com/" },
+    { "id": "sdr", "name": "SDR Educational Consultants", "short": "SDR", "aliases": ["SDR"], "website": "" },
+    { "id": "tec", "name": "The Evaluation Company", "short": "The Evaluation Company", "aliases": ["The Evaluation Company", "SpanTran", "TEC"], "website": "https://www.evalcompany.com/" },
+    { "id": "ucredo", "name": "Ucredo", "short": "Ucredo", "aliases": ["Ucredo"], "website": "" },
+    { "id": "wes", "name": "World Education Services", "short": "WES", "aliases": ["WES"], "website": "https://www.wes.org/" }
+  ],
+  "closed": [
+    { "id": "aerc", "name": "American Education Research Corporation", "short": "AERC", "aliases": ["AERC"], "closed_on": "2025-08-30", "note": "AERC closed on August 30, 2025. Reports completed prior to this date are still acceptable." },
+    { "id": "iice", "name": "Institute for International Credentials Evaluations at California State University, Fresno", "short": "IICE", "aliases": ["IICE"], "closed_on": "2014-06-30", "note": "IICE closed June 30, 2014." }
+  ]
+}

@@ -1,0 +1,122 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Case {
+  id         String     @id @default(cuid())
+  language   String
+  pathway_id String?
+  first_name String?
+  intake     String     @default("{}")
+  history    String     @default("[]")
+  facts      Fact[]
+  documents  Document[]
+  actions    Action[]
+  scenarios  Scenario[]
+  channels   Channel[]
+  created_at DateTime   @default(now())
+}
+
+model Document {
+  id          String   @id @default(cuid())
+  case_id     String
+  case        Case     @relation(fields: [case_id], references: [id])
+  kind        String
+  language    String?
+  file_path   String?
+  mime        String?
+  file_name   String?
+  page_count  Int?
+  status      String
+  raw_text    String?
+  reading_aid String?
+  model       String?
+  facts       Fact[]
+  created_at  DateTime @default(now())
+}
+
+model Fact {
+  id                String    @id @default(cuid())
+  case_id           String
+  case              Case      @relation(fields: [case_id], references: [id])
+  document_id       String?
+  document          Document? @relation(fields: [document_id], references: [id])
+  key               String
+  value             String
+  original_text     String?
+  page              Int?
+  state             String
+  source            String    @default("document")
+  confirmed_by_user Boolean   @default(false)
+  corrected         Boolean   @default(false)
+  hypothetical      Boolean   @default(false)
+  scenario_id       String?
+  created_at        DateTime  @default(now())
+}
+
+model Requirement {
+  id         String   @id @default(cuid())
+  case_id    String
+  rule_id    String
+  state      String
+  reason     String?
+  question   String?
+  evidence   String
+  run_id     String
+  created_at DateTime @default(now())
+}
+
+model Action {
+  id            String    @id @default(cuid())
+  case_id       String
+  case          Case      @relation(fields: [case_id], references: [id])
+  kind          String
+  rule_ids      String
+  state         String
+  deadline      DateTime?
+  draft_primary String?
+  draft_aid     String?
+  draft_lang    String?
+  history       String    @default("[]")
+  created_at    DateTime  @default(now())
+}
+
+model Scenario {
+  id         String   @id @default(cuid())
+  case_id    String
+  case       Case     @relation(fields: [case_id], references: [id])
+  patch      String
+  delta      String
+  committed  Boolean  @default(false)
+  created_at DateTime @default(now())
+}
+
+model Channel {
+  id           String    @id @default(cuid())
+  case_id      String
+  case         Case      @relation(fields: [case_id], references: [id])
+  kind         String
+  address      String    @unique
+  joined_at    DateTime  @default(now())
+  last_inbound DateTime  @default(now())
+  messages     Message[]
+  created_at   DateTime  @default(now())
+}
+
+model Message {
+  id          String   @id @default(cuid())
+  channel_id  String
+  channel     Channel  @relation(fields: [channel_id], references: [id])
+  direction   String
+  body        String?
+  media_path  String?
+  media_type  String?
+  transcript  String?
+  provider_id String?  @unique
+  created_at  DateTime @default(now())
+}

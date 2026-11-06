@@ -1,0 +1,9 @@
+{ "kind": "ctc_letter", "language": "en", "facts": [
+  { "key": "ctc_letter.present", "value": true, "original_text": "Commission on Teacher Credentialing", "page": 1 },
+  { "key": "ctc_letter.date", "value": "2026-10-14", "original_text": "October 14, 2026", "page": 1 },
+  { "key": "ctc_letter.subject", "value": "Returned for Additional Information", "original_text": "RE: Returned for Additional Information", "page": 1 },
+  { "key": "ctc_letter.application_title", "value": "Preliminary Multiple Subject Teaching Credential", "original_text": "Preliminary Multiple Subject Teaching Credential", "page": 1 },
+  { "key": "ctc_letter.items", "value": [ { "number": 1, "text": "The foreign transcript evaluation submitted is a general report. A detailed course-by-course evaluation from a Commission-approved agency is required." }, { "number": 2, "text": "The evaluation does not verify completion of a professional preparation program in elementary education including student teaching." } ], "original_text": "1. The foreign transcript evaluation submitted is a general report ... 2. The evaluation does not verify completion ...", "page": 1 },
+  { "key": "ctc_letter.deadline_days", "value": 60, "original_text": "You have 60 days from the date of this letter to submit the requested materials.", "page": 1 },
+  { "key": "ctc_letter.must_attach_letter", "value": true, "original_text": "Materials must be accompanied by a copy of this letter.", "page": 1 }
+] }

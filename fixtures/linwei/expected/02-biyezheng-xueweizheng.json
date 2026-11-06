@@ -1,0 +1,36 @@
+{
+ "kind": "degree",
+ "language": "zh",
+ "facts": [
+  {
+   "key": "degree.present",
+   "value": true,
+   "original_text": "毕业证书",
+   "page": 1
+  },
+  {
+   "key": "degree.title",
+   "value": "文学学士（汉语言文学，师范）",
+   "original_text": "授予文学学士学位",
+   "page": 2
+  },
+  {
+   "key": "degree.institution",
+   "value": "杭州师范大学",
+   "original_text": "杭州师范大学",
+   "page": 1
+  },
+  {
+   "key": "degree.date",
+   "value": "2013-06-28",
+   "original_text": "2013年6月28日",
+   "page": 2
+  },
+  {
+   "key": "degree.holder_name",
+   "value": "林薇",
+   "original_text": "林薇",
+   "page": 1
+  }
+ ]
+}

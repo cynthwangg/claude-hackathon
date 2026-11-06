@@ -1,0 +1,36 @@
+{
+ "kind": "license",
+ "language": "zh",
+ "facts": [
+  {
+   "key": "license.present",
+   "value": true,
+   "original_text": "教师资格证书",
+   "page": 1
+  },
+  {
+   "key": "license.profession_title",
+   "value": "初级中学教师资格，语文",
+   "original_text": "初级中学教师资格 · 语文",
+   "page": 1
+  },
+  {
+   "key": "license.issuer",
+   "value": "杭州市教育局",
+   "original_text": "认定机构 杭州市教育局",
+   "page": 1
+  },
+  {
+   "key": "license.year",
+   "value": "2013",
+   "original_text": "2013年7月20日",
+   "page": 1
+  },
+  {
+   "key": "license.holder_name",
+   "value": "林薇",
+   "original_text": "林薇",
+   "page": 1
+  }
+ ]
+}

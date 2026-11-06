@@ -1,0 +1,17 @@
+node_modules
+.next
+.env*
+!.env.example
+*.db
+*.db-journal
+uploads
+test-results
+playwright-report
+tsconfig.tsbuildinfo
+next-env.d.ts
+.claude/
+test.py
+
+# private notes and spec, not published
+*.md
+docs/

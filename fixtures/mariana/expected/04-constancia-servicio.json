@@ -1,0 +1,8 @@
+{ "kind": "experience", "language": "es", "facts": [
+  { "key": "experience.present", "value": true, "original_text": "CONSTANCIA DE SERVICIO", "page": 1 },
+  { "key": "experience.role", "value": "Docente frente a grupo", "original_text": "docente frente a grupo", "page": 1 },
+  { "key": "experience.start", "value": "2010-08-16", "original_text": "16 de agosto de 2010", "page": 1 },
+  { "key": "experience.end", "value": "2020-06-30", "original_text": "30 de junio de 2020", "page": 1 },
+  { "key": "experience.school", "value": "Escuela Primaria Niños Héroes, Zapopan", "original_text": "Escuela Primaria \"Niños Héroes\", Zapopan, Jalisco", "page": 1 },
+  { "key": "experience.grades", "value": "2 a 5", "original_text": "segundo a quinto grado", "page": 1 }
+] }

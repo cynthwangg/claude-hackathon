@@ -1,0 +1,72 @@
+{
+ "kind": "transcript",
+ "language": "zh",
+ "facts": [
+  {
+   "key": "transcript.present",
+   "value": true,
+   "original_text": "成 绩 单",
+   "page": 1
+  },
+  {
+   "key": "transcript.institution",
+   "value": "杭州师范大学",
+   "original_text": "杭州师范大学",
+   "page": 1
+  },
+  {
+   "key": "transcript.student_name",
+   "value": "林薇",
+   "original_text": "林薇",
+   "page": 1
+  },
+  {
+   "key": "transcript.program_name",
+   "value": "汉语言文学（师范）",
+   "original_text": "汉语言文学（师范）",
+   "page": 1
+  },
+  {
+   "key": "transcript.start_date",
+   "value": "2009-09",
+   "original_text": "2009年9月",
+   "page": 1
+  },
+  {
+   "key": "transcript.end_date",
+   "value": "2013-06",
+   "original_text": "2013年6月",
+   "page": 1
+  },
+  {
+   "key": "transcript.issue_date",
+   "value": "2013-07-02",
+   "original_text": "打印日期 2013年7月2日",
+   "page": 1
+  },
+  {
+   "key": "transcript.grading_scale",
+   "value": "100-point",
+   "original_text": "成绩",
+   "page": 1
+  },
+  {
+   "key": "transcript.course_names",
+   "value": [
+    "教育学",
+    "心理学",
+    "中国语言文学",
+    "语文课程与教学论",
+    "现代汉语",
+    "古代汉语",
+    "中学语文教材分析",
+    "教育科学研究方法",
+    "班级管理",
+    "教育实习",
+    "毕业论文"
+   ],
+   "original_text": "课程名称",
+   "page": 1
+  }
+ ]
+}

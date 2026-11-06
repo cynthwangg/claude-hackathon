@@ -1,0 +1,7 @@
+{ "kind": "license", "language": "es", "facts": [
+  { "key": "license.present", "value": true, "original_text": "CÉDULA PROFESIONAL", "page": 1 },
+  { "key": "license.profession_title", "value": "Licenciada en Educación Primaria", "original_text": "LICENCIADA EN EDUCACIÓN PRIMARIA", "page": 1 },
+  { "key": "license.issuer", "value": "SEP, Dirección General de Profesiones", "original_text": "DIRECCIÓN GENERAL DE PROFESIONES", "page": 1 },
+  { "key": "license.year", "value": "2011", "original_text": "2011", "page": 1 },
+  { "key": "license.holder_name", "value": "Mariana Ortega Villaseñor", "original_text": "ORTEGA VILLASEÑOR MARIANA", "page": 1 }
+] }

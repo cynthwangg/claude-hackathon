@@ -1,0 +1,58 @@
+{
+ "kind": "evaluation_report",
+ "language": "en",
+ "facts": [
+  {
+   "key": "evaluation.present",
+   "value": true,
+   "original_text": "CREDENTIAL EVALUATION REPORT",
+   "page": 1
+  },
+  {
+   "key": "evaluation.agency_name",
+   "value": "American Education Research Corporation (AERC)",
+   "original_text": "American Education Research Corporation (AERC)",
+   "page": 1
+  },
+  {
+   "key": "evaluation.report_date",
+   "value": "2025-10-01",
+   "original_text": "October 1, 2025",
+   "page": 1
+  },
+  {
+   "key": "evaluation.report_type",
+   "value": "course_by_course",
+   "original_text": "Report type: Course-by-Course",
+   "page": 2
+  },
+  {
+   "key": "evaluation.us_equivalency_statement",
+   "value": "Bachelor's degree, Elementary Education",
+   "original_text": "U.S. Equivalency: Bachelor's degree, Elementary Education",
+   "page": 1
+  },
+  {
+   "key": "evaluation.lists_courses",
+   "value": true,
+   "original_text": "Course-by-course analysis follows.",
+   "page": 2
+  },
+  {
+   "key": "evaluation.mentions_student_teaching",
+   "value": true,
+   "original_text": "Student Teaching I, II (supervised practicum)",
+   "page": 2
+  },
+  {
+   "key": "evaluation.documents_reviewed",
+   "value": [
+    "Título",
+    "Certificado de estudios",
+    "Cédula profesional"
+   ],
+   "original_text": "Documents reviewed: Título, Certificado de estudios",
+   "page": 1
+  }
+ ]
+}

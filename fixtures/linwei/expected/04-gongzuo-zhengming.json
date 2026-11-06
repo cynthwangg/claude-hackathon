@@ -1,0 +1,42 @@
+{
+ "kind": "experience",
+ "language": "zh",
+ "facts": [
+  {
+   "key": "experience.present",
+   "value": true,
+   "original_text": "工作证明",
+   "page": 1
+  },
+  {
+   "key": "experience.role",
+   "value": "初中语文教师",
+   "original_text": "任初中语文教师",
+   "page": 1
+  },
+  {
+   "key": "experience.start",
+   "value": "2013-09-01",
+   "original_text": "2013年9月1日",
+   "page": 1
+  },
+  {
+   "key": "experience.end",
+   "value": "2021-07-15",
+   "original_text": "2021年7月15日",
+   "page": 1
+  },
+  {
+   "key": "experience.school",
+   "value": "杭州市文澜中学",
+   "original_text": "杭州市文澜中学",
+   "page": 1
+  },
+  {
+   "key": "experience.grades",
+   "value": "7 to 9",
+   "original_text": "七至九年级",
+   "page": 1
+  }
+ ]
+}
