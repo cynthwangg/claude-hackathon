@@ -200,6 +200,7 @@ export async function correctFact(factId: string, value: unknown) {
   const f = await db.fact.findUnique({ where: { id: factId } });
   if (!f || f.hypothetical) throw new Error("fact_not_found");
   if (f.key === "ctc_letter.deadline_days" || f.key === "ctc_letter.items") throw new Error("read_only");
+  if (/(^|\.)(date|start_date|end_date|issue_date|report_date|start|end)$/.test(f.key) && !(typeof value === "string" && /^\d{4}(-\d{2}(-\d{2})?)?$/.test(value.trim()))) throw new Error("bad_value");
   const updated = await db.fact.update({ where: { id: factId }, data: { value: JSON.stringify(value), corrected: true, confirmed_by_user: true } });
   if (f.key.startsWith("ctc_letter.") && f.document_id) await refreshReadingAid(f.document_id);
   return updated;

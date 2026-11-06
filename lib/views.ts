@@ -44,7 +44,12 @@ export function positionView(c: C, a: Analysis) {
     unknown = [];
   }
   const years = experienceYears(f) ?? c.intakeObj.years_experience;
-  const extraHave = f.has("experience.present") && years ? [{ text: t(lang, "position.experience", { years }), state_word: t(lang, "state.from_document"), note: t(lang, "position.experience_note") }] : [];
+  const extraHave: { text: string; state_word: string; note: string | null; rule_id: string | null }[] = [];
+  // The practicum she has is shown as hers even while the evaluation that documents it is still needed (6.4).
+  const r05 = a.requirements.find((r) => r.rule_id === "R05");
+  if (f.has("transcript.practicum_named") && r05 && !["official", "checked", "from_document"].includes(r05.state))
+    extraHave.push({ text: t(lang, "req.R05.have", vars(lang, f)), state_word: t(lang, "state.from_document"), note: null, rule_id: "R05" });
+  if (f.has("experience.present") && years) extraHave.push({ text: t(lang, "position.experience", { years }), state_word: t(lang, "state.from_document"), note: t(lang, "position.experience_note"), rule_id: null });
   const accepted = c.actions.filter((x) => x.state === "accepted").map((x) => ({ kind: x.kind, statement: !f.officialDecisionFor(JSON.parse(x.rule_ids)[0] ?? "") }));
   return {
     doc_count: docCount,

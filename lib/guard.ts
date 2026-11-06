@@ -4,10 +4,10 @@ export const ELIGIBILITY_CLAIM =
 
 export const FORBIDDEN_IN_UNKNOWN = /\b(probably|likely|most applicants|you should be fine|probablemente|seguramente)\b|很可能|大概/i;
 
-export const EM_DASH = /—/;
+export const EM_DASH = /\u2014/;
 
 /** Cleans a sentence the model wrote before it is shown to her. Returns null when it must not be shown. */
 export function guardModelText(s: string): string | null {
   if (ELIGIBILITY_CLAIM.test(s)) return null;
-  return s.replace(/—|–/g, ",").replace(/!/g, ".").replace(/\s+,/g, ",").trim();
+  return s.replace(/\u2014|\u2013/g, ",").replace(/!/g, ".").replace(/\s+,/g, ",").trim();
 }

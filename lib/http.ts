@@ -21,7 +21,7 @@ export async function handle(fn: () => Promise<Response>): Promise<Response> {
     if (e instanceof ModelError) return fail("error.generic", 502);
     const msg = e instanceof Error ? e.message : "";
     if (msg.endsWith("_not_found")) return fail("not_found", 404);
-    if (["unsupported_type", "read_only", "not_a_stated_key", "bad_state"].includes(msg)) return fail(msg, 400);
+    if (["unsupported_type", "read_only", "not_a_stated_key", "bad_state", "bad_value"].includes(msg)) return fail(msg, 400);
     console.error(e);
     return fail("error.generic", 500);
   }

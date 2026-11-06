@@ -15,3 +15,5 @@ test.py
 # private notes and spec, not published
 *.md
 docs/
+gate.db*
+prisma/*.db*

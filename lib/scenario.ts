@@ -45,7 +45,8 @@ export async function runScenario(c: C, patch: Patch) {
   else if (d.nextChanged) summary = t(lang, "change.summary.next_only");
   else if (d.routeChanges.includes("fingerprint_location")) summary = t(lang, "change.summary.none");
   else summary = t(lang, "change.summary.nothing");
-  const next = d.nextChanged ? { was: t(lang, `action.${base.next.headline}`), now: t(lang, `action.${hyp.next.headline}`) } : null;
+  const plan = (n: typeof base.next) => [n.headline, ...n.also].map((k) => t(lang, `action.${k}`)).join(" · ");
+  const next = d.nextChanged ? { was: plan(base.next), now: plan(hyp.next) } : null;
   const s = await db.scenario.create({ data: { case_id: c.id, patch: JSON.stringify(patch), delta: JSON.stringify(d) } });
   return { scenario_id: s.id, changes, stays, notes, summary, next, today: today().toISOString().slice(0, 10) };
 }

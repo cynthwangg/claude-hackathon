@@ -6,20 +6,17 @@
   "notconfigured": "The reading service is not set up on this computer yet. Add the Anthropic key to .env and restart.",
   "error.generic": "Something went wrong on our side. What you wrote is saved. Try again.",
   "error.retry": "Try again",
-
   "welcome.p1": "You trained somewhere else. The place you live now has a way to recognize that.",
   "welcome.p2": "Earned reads the documents you already have, names the office that decides your case, and shows what that office has seen, what is still missing and the one thing to do next. In your language.",
   "welcome.p3": "It does not decide anything. The office decides. We tell you exactly where each decision stands.",
   "welcome.start": "Tell me where you are",
   "welcome.depth": "Mapped in full today for elementary teachers in California. For any other work or state, it still reads your documents, names the office and writes your first question to them.",
-
   "nav.where": "Where you stand",
   "nav.documents": "Documents",
   "nav.route": "Your route",
   "nav.week": "This week",
   "nav.progress": "Progress",
   "nav.change": "Change my circumstances",
-
   "opener.title": "Tell me where you are.",
   "opener.lead": "In your own words, in any language. What you did before, where you studied, where you live now, what you have already tried.",
   "opener.placeholder": "For example, I taught primary school in Guadalajara for ten years and moved to San Jose. I got a letter from the state I don't understand.",
@@ -39,7 +36,6 @@
   "opener.understood": "This is what I understood.",
   "opener.change": "Change",
   "opener.continue": "Now show me what you have",
-
   "intake.profession": "Work",
   "intake.country": "Trained in",
   "intake.state": "Lives in",
@@ -69,13 +65,11 @@
   "level.elementary": "elementary",
   "level.secondary": "secondary",
   "level.early_childhood": "early childhood",
-
   "office.title": "The office that decides",
   "office.open": "Open their page",
   "office.unknown_state": "Tell me which state you live in and I will name the office that decides.",
   "office.found_by_search": "Found on an official page today. Confirm on their site before you rely on it.",
   "office.question_title": "Your first question to them",
-
   "docs.first": "First, {noun}.",
   "docs.next": "Now, {noun}.",
   "docs.looks_like": "What it looks like",
@@ -101,7 +95,6 @@
   "docs.reading_aid": "Unofficial reading aid",
   "docs.injection": "This page contains text addressed to a computer. It was copied, not followed.",
   "docs.not_found": "I did not find this on the page",
-
   "noun.ctc_letter": "the CTC letter",
   "noun.evaluation_report": "the evaluation",
   "noun.transcript": "your transcript",
@@ -111,7 +104,6 @@
   "noun.practicum_record": "the practicum record",
   "noun.other": "this document",
   "noun.license_generic": "your license",
-
   "ask.ctc_letter.looks": "A letter from the Commission, often titled Returned or Deficiency, with numbered items.",
   "ask.ctc_letter.for": "Each item they asked for, and the date, because a clock starts with it.",
   "ask.evaluation_report.looks": "A report from an evaluation agency with a US equivalency line and a report type.",
@@ -124,7 +116,6 @@
   "ask.license.for": "Who issued it and for what. A photocopy is enough.",
   "ask.experience.looks": "A letter from your employer or education office about your years of work.",
   "ask.experience.for": "Your role, the school and the dates. It is yours even when it is not required.",
-
   "label.transcript.institution": "School",
   "label.transcript.student_name": "Name",
   "label.transcript.program_name": "Program",
@@ -174,7 +165,6 @@
   "value.other": "Other",
   "value.true": "Yes",
   "value.false": "No",
-
   "state.from_document": "From your document",
   "state.checked": "Checked",
   "state.official": "Accepted by CTC",
@@ -182,7 +172,6 @@
   "state.unknown": "We can't tell yet",
   "state.later": "Later",
   "state.statement": "According to you",
-
   "position.header": "{name}, here is what you already have.",
   "position.header_noname": "Here is what you already have.",
   "position.have": "You already have",
@@ -201,7 +190,6 @@
   "position.next": "What to do this week",
   "position.ctc_intro": "The Commission on Teacher Credentialing, the CTC, decides your case.",
   "position.near_note": "We have mapped the elementary route in full. For secondary teaching (Single Subject, leaflet CL-870) the first steps are the same, and where a rule differs we say we can't tell yet.",
-
   "req.R01.have": "A course-by-course evaluation of your studies",
   "req.R01.missing.report_type_general": "A course-by-course evaluation from an agency the CTC approves. The one you have is general, and the CTC does not accept it for the credential.",
   "req.R01.missing.report_type_other": "A course-by-course evaluation. The report you uploaded does not say it is one.",
@@ -239,7 +227,6 @@
   "req.R21.missing.respond_by": "Answer the CTC letter by {deadline}, with a copy of the letter. {days} days left.",
   "req.R21.missing.deadline_passed": "The letter's deadline passed on {deadline}.",
   "req.later": "{title}",
-
   "why.title": "Why",
   "why.close": "Close",
   "why.asks": "What the CTC asks",
@@ -258,7 +245,6 @@
   "why.live_not_found": "The page changed since we read it. A person has to review this rule before you rely on it.",
   "why.live_failed": "We could not open the CTC page right now. The quote is from {date}.",
   "why.statement": "Your own answer",
-
   "route.title": "Preliminary Multiple Subject credential, direct application to the CTC",
   "route.decides": "Who decides · The Commission on Teacher Credentialing, the CTC",
   "route.step.evaluation": "Request a course-by-course evaluation from an approved agency, sending your teaching license too",
@@ -284,7 +270,6 @@
   "route.bridge": "The CTC accepts a general report only for this permit. Your current report could let you work as a substitute while the course-by-course report is prepared. A school has to want to hire you and it has its own requirements. Confirm with the CTC before relying on it.",
   "route.blocker": "There is a requirement no step we can offer resolves.",
   "route.preflight": "Before I pay",
-
   "week.title": "This week",
   "week.request_evaluation": "Request the course-by-course report from an approved agency",
   "week.request_evaluation.why": "It is the one step that answers both items of the CTC letter.",
@@ -332,7 +317,6 @@
   "week.ssn.prefer_not": "I'd rather not say",
   "week.ssn.saved": "Your answer · {answer}",
   "week.ssn.change": "Change",
-
   "letter.title_school": "Letter to your school",
   "letter.title_agency": "Note for the agency",
   "letter.title_ctc": "Question for the CTC",
@@ -347,7 +331,6 @@
   "letter.preparing": "Preparing the letter.",
   "letter.failed": "I could not prepare the letter. Here is the empty template to fill in.",
   "letter.to_ctc": "To · Questions Regarding Applications, Contact the Commission page",
-
   "progress.title": "Progress",
   "progress.since": "since {date}",
   "progress.deadline": "deadline {date}",
@@ -366,7 +349,6 @@
   "progress.undo": "Undo",
   "progress.ctc_note": "The CTC still has to review. Only a CTC notice marks something accepted.",
   "progress.empty": "Nothing to track yet. The first action appears here once you see where you stand.",
-
   "change.title": "Change my circumstances",
   "change.lead": "Change one thing and see what moves. Nothing here changes your case unless you say it happened.",
   "change.as_is": "As it is",
@@ -408,7 +390,6 @@
   "change.blocker_appears": "A requirement appears that no step we can offer resolves.",
   "change.fingerprint_method": "Fingerprints change from Live Scan to FD-258 cards, $49.",
   "change.fingerprint_location": "Only the place where your fingerprints would be taken changes.",
-
   "action.request_evaluation": "Course-by-course evaluation",
   "action.request_school_letter": "Student teaching letter from your school",
   "action.respond_ctc_letter": "Answer to the CTC letter",
@@ -418,8 +399,8 @@
   "action.apply_ctc": "Application in CTC Online",
   "action.upload_evaluation": "Upload your evaluation",
   "action.wait": "Waiting for the CTC",
-
   "general.title": "What we can do today",
   "general.documents": "Upload what you have. I read each document and tell you exactly what it says.",
-  "join.and": " and "
+  "join.and": " and ",
+  "why.back": "Back"
 }

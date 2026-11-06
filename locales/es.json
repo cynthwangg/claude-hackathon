@@ -3,20 +3,17 @@
   "notconfigured": "El servicio de lectura todavía no está configurado en esta computadora. Agrega la clave de Anthropic a .env y reinicia.",
   "error.generic": "Algo falló de nuestro lado. Lo que escribiste está guardado. Inténtalo otra vez.",
   "error.retry": "Intentar otra vez",
-
   "welcome.p1": "Te formaste en otro país. El lugar donde vives ahora tiene una forma de reconocerlo.",
   "welcome.p2": "Earned lee los documentos que ya tienes, nombra la oficina que decide tu caso y te muestra qué ha visto esa oficina, qué falta todavía y la única cosa que conviene hacer ahora. En tu idioma.",
   "welcome.p3": "No decide nada. La oficina decide. Te decimos exactamente en qué punto está cada decisión.",
   "welcome.start": "Cuéntame dónde estás",
   "welcome.depth": "Hoy está mapeado por completo para maestras de primaria en California. Para cualquier otro trabajo o estado, igual lee tus documentos, nombra la oficina y escribe tu primera pregunta para ellos.",
-
   "nav.where": "Dónde estás",
   "nav.documents": "Documentos",
   "nav.route": "Tu ruta",
   "nav.week": "Esta semana",
   "nav.progress": "Avance",
   "nav.change": "Cambiar mi situación",
-
   "opener.title": "Cuéntame dónde estás.",
   "opener.lead": "Con tus palabras, en el idioma que quieras. Qué hacías antes, dónde estudiaste, dónde vives ahora, qué has intentado.",
   "opener.placeholder": "Por ejemplo, fui maestra de primaria en Guadalajara diez años y me mudé a San José. Me llegó una carta que no entiendo.",
@@ -36,7 +33,6 @@
   "opener.understood": "Esto es lo que entendí.",
   "opener.change": "Cambiar",
   "opener.continue": "Ahora muéstrame lo que tengas",
-
   "intake.profession": "Trabajo",
   "intake.country": "Estudió en",
   "intake.state": "Vive en",
@@ -66,13 +62,11 @@
   "level.elementary": "primaria",
   "level.secondary": "secundaria",
   "level.early_childhood": "preescolar",
-
   "office.title": "La oficina que decide",
   "office.open": "Abrir su página",
   "office.unknown_state": "Dime en qué estado vives y te digo qué oficina decide.",
   "office.found_by_search": "Encontrado hoy en una página oficial. Confírmalo en su sitio antes de contar con esto.",
   "office.question_title": "Tu primera pregunta para ellos",
-
   "docs.first": "Primero, {noun}.",
   "docs.next": "Ahora, {noun}.",
   "docs.looks_like": "Cómo se ve",
@@ -98,7 +92,6 @@
   "docs.reading_aid": "Traducción de apoyo, no oficial",
   "docs.injection": "Esta página contiene texto dirigido a una computadora. Se copió, no se siguió.",
   "docs.not_found": "No lo encontré en el documento",
-
   "noun.ctc_letter": "la carta de la CTC",
   "noun.evaluation_report": "la evaluación",
   "noun.transcript": "tu certificado de estudios",
@@ -108,7 +101,6 @@
   "noun.practicum_record": "la constancia de práctica",
   "noun.other": "este documento",
   "noun.license_generic": "tu licencia",
-
   "ask.ctc_letter.looks": "Una carta de la Comisión, muchas veces titulada Returned o Deficiency, con puntos numerados.",
   "ask.ctc_letter.for": "Cada cosa que piden y la fecha, porque con ella empieza a correr el plazo.",
   "ask.evaluation_report.looks": "Un reporte de una agencia evaluadora con una línea de equivalencia en EE. UU. y un tipo de reporte.",
@@ -121,7 +113,6 @@
   "ask.license.for": "Quién la emitió y para qué. Una copia es suficiente.",
   "ask.experience.looks": "Una constancia de tu empleo o de la secretaría de educación.",
   "ask.experience.for": "Tu puesto, la escuela y las fechas. Es tuyo aunque no se pida.",
-
   "label.transcript.institution": "Escuela",
   "label.transcript.student_name": "Nombre",
   "label.transcript.program_name": "Programa",
@@ -171,7 +162,6 @@
   "value.other": "Otro",
   "value.true": "Sí",
   "value.false": "No",
-
   "state.from_document": "De tu documento",
   "state.checked": "Verificado",
   "state.official": "Aceptado por la CTC",
@@ -179,7 +169,6 @@
   "state.unknown": "Aún no podemos saber",
   "state.later": "Más adelante",
   "state.statement": "Según tú",
-
   "position.header": "{name}, esto es lo que ya tienes.",
   "position.header_noname": "Esto es lo que ya tienes.",
   "position.have": "Ya tienes",
@@ -198,7 +187,6 @@
   "position.next": "Qué hacer esta semana",
   "position.ctc_intro": "La Comisión de Acreditación Docente de California, la CTC, decide tu caso.",
   "position.near_note": "Tenemos la ruta de primaria completa. Para secundaria (Single Subject, folleto CL-870) los primeros pasos son los mismos, y donde una regla es distinta decimos que aún no podemos saber.",
-
   "req.R01.have": "Una evaluación curso por curso de tus estudios",
   "req.R01.missing.report_type_general": "Una evaluación curso por curso de una agencia aprobada por la CTC. La que tienes es general y la CTC no la acepta para la credencial.",
   "req.R01.missing.report_type_other": "Una evaluación curso por curso. El reporte que subiste no dice que lo sea.",
@@ -235,7 +223,6 @@
   "req.R21.have": "Respondiste la carta de la CTC",
   "req.R21.missing.respond_by": "Responder la carta de la CTC antes del {deadline}, con una copia de la carta. Quedan {days} días.",
   "req.R21.missing.deadline_passed": "El plazo de la carta venció el {deadline}.",
-
   "why.title": "Por qué",
   "why.close": "Cerrar",
   "why.asks": "Qué pide la CTC",
@@ -254,7 +241,6 @@
   "why.live_not_found": "La página cambió desde que la leímos. Una persona tiene que revisar esta regla antes de confiar en ella.",
   "why.live_failed": "No pudimos abrir la página de la CTC ahora mismo. La cita es del {date}.",
   "why.statement": "Tu propia respuesta",
-
   "route.title": "Credencial preliminar Multiple Subject, solicitud directa a la CTC",
   "route.decides": "Quién decide · La Comisión de Acreditación Docente de California, la CTC",
   "route.step.evaluation": "Pedir evaluación curso por curso a una agencia aprobada, enviando también tu cédula",
@@ -280,7 +266,6 @@
   "route.bridge": "La CTC acepta un reporte general solo para este permiso. Tu reporte actual podría servir para trabajar como suplente mientras llega el reporte curso por curso. Necesita que una escuela te quiera contratar y tiene sus propios requisitos. Confírmalo con la CTC antes de contar con esto.",
   "route.blocker": "Hay un requisito que ningún paso que podamos ofrecer resuelve.",
   "route.preflight": "Antes de pagar",
-
   "week.title": "Esta semana",
   "week.request_evaluation": "Pedir el reporte curso por curso a una agencia aprobada",
   "week.request_evaluation.why": "Es el único paso que responde los dos puntos de la carta de la CTC.",
@@ -328,7 +313,6 @@
   "week.ssn.prefer_not": "Prefiero no decir",
   "week.ssn.saved": "Tu respuesta · {answer}",
   "week.ssn.change": "Cambiar",
-
   "letter.title_school": "Carta para tu escuela",
   "letter.title_agency": "Nota para la agencia",
   "letter.title_ctc": "Pregunta para la CTC",
@@ -343,7 +327,6 @@
   "letter.preparing": "Preparando la carta.",
   "letter.failed": "No pude preparar la carta. Aquí está la plantilla vacía para que la llenes.",
   "letter.to_ctc": "Para · Questions Regarding Applications, página Contact the Commission",
-
   "progress.title": "Avance",
   "progress.since": "desde el {date}",
   "progress.deadline": "plazo el {date}",
@@ -362,7 +345,6 @@
   "progress.undo": "Deshacer",
   "progress.ctc_note": "La CTC todavía tiene que revisar. Solo un aviso de la CTC marca algo como aceptado.",
   "progress.empty": "Todavía no hay nada que seguir. La primera acción aparece aquí cuando veas dónde estás.",
-
   "change.title": "Cambiar mi situación",
   "change.lead": "Cambia una cosa y mira qué se mueve. Nada de esto cambia tu caso a menos que digas que pasó de verdad.",
   "change.as_is": "Como está",
@@ -404,7 +386,6 @@
   "change.blocker_appears": "Aparece un requisito que ningún paso que podamos ofrecer resuelve.",
   "change.fingerprint_method": "Las huellas pasan de Live Scan a tarjetas FD-258, $49.",
   "change.fingerprint_location": "Solo cambia el lugar donde te tomarían las huellas.",
-
   "action.request_evaluation": "Evaluación curso por curso",
   "action.request_school_letter": "Constancia de práctica docente",
   "action.respond_ctc_letter": "Respuesta a la carta de la CTC",
@@ -414,8 +395,8 @@
   "action.apply_ctc": "Solicitud en CTC Online",
   "action.upload_evaluation": "Subir tu evaluación",
   "action.wait": "Esperando a la CTC",
-
   "general.title": "Lo que podemos hacer hoy",
   "general.documents": "Sube lo que tengas. Leo cada documento y te digo exactamente qué dice.",
-  "join.and": " y "
+  "join.and": " y ",
+  "why.back": "Volver"
 }
