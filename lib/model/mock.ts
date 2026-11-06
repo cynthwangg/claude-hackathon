@@ -77,10 +77,14 @@ export const mockProvider: ModelProvider = {
     return { kind: "other", language: "en", facts: [{ key: "other.present", value: true, original_text: null, page: 1 }], raw_text: null, page_count: 1 };
   },
   async readingAid(lang, officialText) {
-    const lead = lang === "es" ? "Traducción de apoyo, no oficial." : lang === "zh" ? "辅助翻译，非正式。" : "Unofficial reading aid.";
-    return `${lead}\n${officialText}`;
+    // D14. A fixed template filled from the extracted letter facts. The real provider writes it with Claude.
+    const date = officialText.match(/^Date (\d{4}-\d{2}-\d{2})/m)?.[1] ?? "";
+    const n = (officialText.match(/^\d+\. /gm) ?? []).length;
+    if (lang === "es") return `Carta del ${date}. La CTC devolvió tu solicitud y pide ${n} cosas, numeradas en la carta. Tienes 60 días desde la fecha de la carta. Lo que mandes tiene que ir con una copia de la carta.`;
+    if (lang === "zh") return `${date} 的来信。CTC 退回了你的申请，信中列出 ${n} 项要求。从来信日期起你有 60 天。寄回材料时必须附上这封信的复印件。`;
+    return "";
   },
-  async translateLetter(_lang, letter) {
-    return letter;
+  async translateLetter() {
+    return "";
   },
 };

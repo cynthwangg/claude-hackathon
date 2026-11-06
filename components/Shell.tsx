@@ -14,7 +14,7 @@ export function Shell({ id, lang, name, active, routeKind, mock, children, wide 
   return (
     <div lang={lang}>
       <header className="top">
-        <div className={`wrap ${wide ? "wide" : ""}`}>
+        <div className="wrap">
           <span className="name">{name ?? ""}</span>
           <nav aria-label="Sections">
             {items.map((k) => (

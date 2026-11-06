@@ -160,6 +160,11 @@ export async function refreshReadingAid(documentId: string) {
   const d = await db.document.findUnique({ where: { id: documentId }, include: { facts: true, case: true } });
   if (!d || d.kind !== "ctc_letter") return;
   const lang = asLang(d.case.language);
+  // An aid is for reading a letter in a language that is not hers. An English letter needs none in English.
+  if ((d.language ?? "en") === lang) {
+    await db.document.update({ where: { id: documentId }, data: { reading_aid: null } });
+    return;
+  }
   const get = (k: string) => parse<unknown>(d.facts.find((f) => f.key === k)?.value, undefined);
   const items = (get("ctc_letter.items") as { number: number; text: string }[] | undefined) ?? [];
   const text = [

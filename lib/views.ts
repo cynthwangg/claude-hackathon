@@ -76,6 +76,7 @@ export function positionView(c: C, a: Analysis) {
       named: it.rule_id === "R05" ? (f.get<string[]>("transcript.practicum_named") ?? []) : [],
     })),
     accepted,
+    transcript_document_id: c.documents.find((d) => d.kind === "transcript" && d.status === "read")?.id ?? null,
     next: weekView(c, a).headline,
   };
 }

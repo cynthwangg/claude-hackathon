@@ -86,8 +86,8 @@ export function draftFor(kind: ActionKind | "office_question", f: FactIndex, ctx
           "To the evaluation agency",
           "I am requesting a detailed course-by-course evaluation of my foreign studies for a California teaching credential (Commission on Teacher Credentialing, Preliminary Multiple Subject).",
           `I am sending my transcript, my degree${license ? `, and my teaching license (${license})` : ", and my teaching license"}, because the Commission asks that the agency also sees the out-of-country teaching credential.`,
-          named.length ? `My transcript lists ${joinList("en", named)}. Please report these as they are documented. A letter from my school describing them is being sent to you directly.` : "",
-          `Name as printed on my documents. ${name}`,
+          named.length ? `My transcript lists ${joinList("en", named)}, which were supervised teaching practice. If my school sends you a letter describing them, please include it in the evaluation.` : "",
+          `My name as it is printed on my documents, ${name}.`,
           "Thank you.",
         ].filter(Boolean).join("\n\n"),
       };
