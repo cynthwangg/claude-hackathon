@@ -12,7 +12,10 @@ import { positionView, weekView, caseHeader } from "./views";
 export type Inbound = { from: string; to: string; body: string; numMedia: number; media: { url: string; type: string }[]; sid: string | null };
 
 const WA_ADDRESS = /^whatsapp:\+\d{6,16}$/;
-export const RESET = /^(reset|restart|start over|start again|new case|reiniciar|empezar de nuevo|borrar|重新开始|重来|重置)[\s.!?¡¿。！？]*$/i;
+/** Start over. "Hi Bridge" is what the landing page types, so arriving from it always starts a fresh case. */
+export const RESET = /^[¡\s]*(reset|restart|start over|start again|new case|reiniciar|empezar de nuevo|borrar|重新开始|重来|重置|(hi|hello|hey|hola|你好|您好)[\s,，]*bridge)[\s.!?¡¿。！？]*$/i;
+/** The language of a fresh case, from the words she used to start over. English unless they are Spanish or Chinese. */
+export const resetLang = (text: string): Lang => (/[一-鿿]/.test(text) ? "zh" : /reiniciar|empezar|borrar|hola/i.test(text) ? "es" : "en");
 const SANDBOX_FROM = "whatsapp:+14155238886";
 
 export function parseInbound(form: URLSearchParams): Inbound {
@@ -76,11 +79,10 @@ export async function handleText(caseId: string, text: string): Promise<string[]
   const c = (await loadCase(caseId))!;
   const lang = c.lang;
   if (r.kind !== "intake_done") return [r.say ?? t(lang, "error.generic")];
-  const h = await caseHeader(c);
-  const office = h.office ? `${t(lang, "office.title")}\n${h.office.name}\n${h.office.url}` : t(lang, "office.unknown_state");
-  const orientation = h.pathway?.orientation ?? h.general_orientation;
-  const ask = await requestLine(caseId);
-  return [office, orientation, ask ?? t(lang, "wa.link", { url: webLink(caseId) })].filter(Boolean);
+  // One short handoff: what Bridge does, what she does, what she gets, one link. The office and the route are on the page.
+  const name = c.intakeObj.first_name ?? c.first_name;
+  const thanks = name ? t(lang, "wa.thanks_name", { name }) : t(lang, "wa.thanks");
+  return [`${thanks} ${t(lang, "wa.handoff", { url: uploadLink(caseId) })}`];
 }
 
 /** Downloads Twilio media with Basic auth, then the same reading pipeline as a web upload. */
@@ -209,7 +211,7 @@ export async function inbound(msg: Inbound): Promise<{ replies: string[]; later?
   if (!msg.body) return { replies: [] };
   // Start over. Her number moves to a new, empty case; the old case stays as it was, reachable by its web link.
   if (RESET.test(msg.body)) {
-    const lang = guessLang(msg.body) === "en" ? c.lang : guessLang(msg.body);
+    const lang = resetLang(msg.body);
     const fresh = await createCase(lang);
     await db.channel.update({ where: { id: channel.id }, data: { case_id: fresh.id } });
     await db.case.update({ where: { id: fresh.id }, data: { history: JSON.stringify([{ role: "assistant", text: t(lang, "agent.welcome") }]) } });

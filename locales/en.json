@@ -480,5 +480,8 @@
   "agent.lang_continue": "We can pick up where we left off. Tell me a bit more about where you are.",
   "agent.lang_hint": "You can write to me in English, Spanish or Chinese. To switch, reply Español or 中文.",
   "agent.reset": "Okay, we're starting fresh.\n\nWhat did you train as, in which country, and where do you live now?",
-  "agent.welcome": "Welcome to Bridge!\n\nWe help women who trained abroad as teachers, nurses and social workers get licensed again in California.\n\nYou show me the documents you already have, and I tell you exactly what's still missing, in your language.\n\nTo start, tell me a little about yourself. What did you train as, where did you train, and where do you live now?\n\nYou can write to me in English, Español or 中文."
+  "agent.welcome": "Welcome to Bridge!\n\nWe help women who trained abroad as teachers, nurses and social workers get licensed again in California.\n\nYou show me the documents you already have, and I tell you exactly what's still missing, in your language.\n\nTo start, tell me a little about yourself. What did you train as, where did you train, and where do you live now?\n\nYou can write to me in English, Español or 中文.",
+  "wa.thanks_name": "Thanks, {name}.",
+  "wa.thanks": "Thanks.",
+  "wa.handoff": "I can help you get licensed again here.\n\nHere's how it works. You show me the documents you already have, like your diploma, your transcript, your license from home, or any letter an office sent you. I'll ask for them one at a time and explain what each one is.\n\nThen you'll see what you already have, what's still missing, and what to do this week.\n\nStart here\n{url}"
 }

@@ -29,8 +29,10 @@ test("WhatsApp runs the same intake and reading as the web", async ({ request })
   const r1 = await post(request, { From: from, NumMedia: "0", MessageSid: `SM${Date.now()}a`, Body: "Hola, soy Mariana. Fui maestra de primaria en Guadalajara, México, diez años. Tengo mi cédula profesional. Vivo en San José. Mandé la solicitud a la CTC y me regresaron una carta que no entiendo." });
   expect(r1.status()).toBe(200);
   const m1 = messages(await r1.text());
-  expect(m1.join("\n")).toContain("Commission on Teacher Credentialing");
-  expect(m1[m1.length - 1]).toContain("Primero, la carta de la CTC.");
+  // One short handoff with the link to the document page, not a wall of agency names.
+  expect(m1).toHaveLength(1);
+  expect(m1[0]).toContain("Gracias, Mariana.");
+  expect(m1[0]).toMatch(/Empieza aquí\n\S+\/c\/[a-z0-9]+\/documents/);
   expect(m1.length).toBeLessThanOrEqual(4);
 
   const sid = `SM${Date.now()}b`;
@@ -91,7 +93,7 @@ test("one agent, one thread: menu and coach on WhatsApp continue on the web", as
   const one = messages(await (await post(request, { From: from, NumMedia: "0", MessageSid: sid("o"), Body: "1" })).text());
   expect(one[0]).toContain("Tell me where you are");
   const intake = messages(await (await post(request, { From: from, NumMedia: "0", MessageSid: sid("i"), Body: "Hi, I'm Lin Wei. I taught middle school in Hangzhou, China for eight years. I live in Oakland. I have my diploma and my teacher certificate. I don't know where to start." })).text());
-  expect(intake.join("\n")).toContain("Commission on Teacher Credentialing");
+  expect(intake.join("\n")).toContain("Start here");
 });
 
 test("reset starts a fresh case with the welcome, and a Spanish story after it is answered in Spanish", async ({ request }) => {
@@ -101,7 +103,7 @@ test("reset starts a fresh case with the welcome, and a Spanish story after it i
   const reset = messages(await (await post(request, { From: from, NumMedia: "0", MessageSid: sid("r"), Body: "reset" })).text());
   expect(reset[0]).toContain("Welcome to Bridge");
   const es = messages(await (await post(request, { From: from, NumMedia: "0", MessageSid: sid("s"), Body: "Hola, soy Mariana. Fui maestra de primaria en Guadalajara, México, diez años. Tengo mi cédula profesional. Vivo en San José. Mandé la solicitud a la CTC y me regresaron una carta que no entiendo." })).text());
-  expect(es.join("\n")).toContain("Primero, la carta de la CTC.");
+  expect(es.join("\n")).toContain("Empieza aquí");
 });
 
 test("a request through a tunnel without a token is refused", async ({ request }) => {

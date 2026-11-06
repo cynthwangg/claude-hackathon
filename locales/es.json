@@ -476,5 +476,8 @@
   "agent.lang_continue": "Sigamos donde nos quedamos. Cuéntame un poco más de dónde estás.",
   "agent.lang_hint": "Puedes escribirme en español, inglés o chino. Para cambiar, responde English o 中文.",
   "agent.reset": "Listo, empezamos de nuevo.\n\n¿Qué estudiaste, en qué país y dónde vives ahora?",
-  "agent.welcome": "¡Bienvenida a Bridge!\n\nAyudamos a mujeres que se formaron en otro país como maestras, enfermeras o trabajadoras sociales a obtener otra vez su licencia en California.\n\nTú me muestras los documentos que ya tienes, y yo te digo exactamente qué falta, en tu idioma.\n\nPara empezar, cuéntame un poco de ti. ¿Qué estudiaste, dónde estudiaste y dónde vives ahora?\n\nPuedes escribirme en English, Español o 中文."
+  "agent.welcome": "¡Bienvenida a Bridge!\n\nAyudamos a mujeres que se formaron en otro país como maestras, enfermeras o trabajadoras sociales a obtener otra vez su licencia en California.\n\nTú me muestras los documentos que ya tienes, y yo te digo exactamente qué falta, en tu idioma.\n\nPara empezar, cuéntame un poco de ti. ¿Qué estudiaste, dónde estudiaste y dónde vives ahora?\n\nPuedes escribirme en English, Español o 中文.",
+  "wa.thanks_name": "Gracias, {name}.",
+  "wa.thanks": "Gracias.",
+  "wa.handoff": "Te puedo ayudar a obtener otra vez tu licencia aquí.\n\nAsí funciona. Me muestras los documentos que ya tienes, como tu título, tu certificado de estudios, tu licencia de tu país o cualquier carta que te haya mandado una oficina. Te los pido uno por uno y te explico qué es cada uno.\n\nDespués verás lo que ya tienes, lo que todavía falta y qué hacer esta semana.\n\nEmpieza aquí\n{url}"
 }

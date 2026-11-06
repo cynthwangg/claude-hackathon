@@ -59,5 +59,16 @@ describe("starting over", () => {
     const { RESET } = await import("@/lib/whatsapp");
     for (const w of ["reset", "Restart", "start over", "reiniciar", "重新开始"]) expect(RESET.test(w)).toBe(true);
     expect(RESET.test("I want to reset my career")).toBe(false);
+    for (const w of ["Hi Bridge", "hi bridge!", "Hola Bridge", "你好 Bridge"]) expect(RESET.test(w)).toBe(true);
+    expect(RESET.test("hi")).toBe(false);
+  });
+
+  it("a fresh case is English unless she started over in Spanish or Chinese", async () => {
+    const { resetLang } = await import("@/lib/whatsapp");
+    expect(resetLang("Hi Bridge")).toBe("en");
+    expect(resetLang("reset")).toBe("en");
+    expect(resetLang("Hola Bridge")).toBe("es");
+    expect(resetLang("reiniciar")).toBe("es");
+    expect(resetLang("你好 Bridge")).toBe("zh");
   });
 });
