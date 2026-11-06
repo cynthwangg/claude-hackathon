@@ -1,0 +1,72 @@
+{
+  "note": "Hack day tier (section 35.2). One hand made WhatsApp group per program and metro. Paste the group's invite link into invite_link. Every member below is synthetic, for the demo only.",
+  "circles": [
+    {
+      "id": "mx_sep_lep_1997.sf_bay_area.1",
+      "program_id": "mx_sep_lep_1997",
+      "metro": "sf_bay_area",
+      "tier": "manual",
+      "invite_link": null
+    },
+    {
+      "id": "cn_moe_teacher_ed_2011.sf_bay_area.1",
+      "program_id": "cn_moe_teacher_ed_2011",
+      "metro": "sf_bay_area",
+      "tier": "manual",
+      "invite_link": null
+    }
+  ],
+  "members": [
+    {
+      "id": "seed_rosa",
+      "synthetic": true,
+      "first_name": "Rosa",
+      "phone": "whatsapp:+15550002001",
+      "program_id": "mx_sep_lep_1997",
+      "metro": "sf_bay_area",
+      "counted": true,
+      "intro_ok": ["school_letter", "evaluation"],
+      "closed": [
+        { "step": "school_letter", "weeks": 3, "on": "2026-03-09" },
+        { "step": "evaluation", "weeks": 7, "on": "2026-05-04" }
+      ]
+    },
+    {
+      "id": "seed_lupita",
+      "synthetic": true,
+      "first_name": "Lupita",
+      "phone": "whatsapp:+15550002002",
+      "program_id": "mx_sep_lep_1997",
+      "metro": "sf_bay_area",
+      "counted": true,
+      "intro_ok": [],
+      "closed": [
+        { "step": "school_letter", "weeks": 2, "on": "2026-11-02" }
+      ]
+    },
+    {
+      "id": "seed_carmen",
+      "synthetic": true,
+      "first_name": "Carmen",
+      "phone": "whatsapp:+15550002003",
+      "program_id": "mx_sep_lep_1997",
+      "metro": "sf_bay_area",
+      "counted": true,
+      "intro_ok": ["school_letter"],
+      "closed": [
+        { "step": "school_letter", "weeks": 4, "on": "2026-11-03" }
+      ]
+    },
+    {
+      "id": "seed_ines",
+      "synthetic": true,
+      "first_name": "Inés",
+      "phone": "whatsapp:+15550002004",
+      "program_id": "mx_sep_lep_1997",
+      "metro": "sf_bay_area",
+      "counted": false,
+      "intro_ok": [],
+      "closed": []
+    }
+  ]
+}
