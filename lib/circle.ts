@@ -1,14 +1,15 @@
 import seedData from "@/data/circles.json";
 import type { Program } from "@/data/programs";
-import type { Lang } from "@/rules/types";
+import type { L10n, Lang } from "@/rules/types";
 import { addDays, parseDay } from "./clock";
 import { COPY, say, sayL10n, type CopyKey } from "./copy";
 import { joinList } from "./i18n";
+import { fold } from "./norm";
 import { exportable, type ShareSource } from "./privacy";
 
 /**
- * Sections 35 and 36. Pure functions over circles and members. Storage comes later (Circle, CircleMember, Intro
- * in section 37); until then the hand made circles and the synthetic members live in data/circles.json.
+ * Sections 35 and 36. Pure functions over groups and members. Groups are the team's hand made WhatsApp groups in
+ * data/circles.json. Members who said yes live in lib/communityStore.ts, synthetic ones in data/circles.json.
  * Nothing here reads a case. A member is program, metro, first name, number, and the steps she chose to report.
  */
 export type Step = "school_letter" | "evaluation" | "ctc_reply" | "live_scan";
@@ -24,7 +25,14 @@ export type Member = {
   intro_ok: Step[];
   closed: { step: Step; weeks: number; on: string }[];
 };
-export type Circle = { id: string; program_id: string; metro: string; tier: "manual" | "groups_api" | "relay"; invite_link: string | null };
+/** A hand made WhatsApp group, matched by profession, country of training and state. "latam" stands for the region. */
+export type Circle = {
+  id: string;
+  name: L10n;
+  invite_link: string | null;
+  match: { professions: string[]; countries: string[]; states: string[] | null };
+};
+export type Who = { profession: string | null; country_of_training: string | null; us_state: string | null };
 
 export const seed = () => ({ circles: seedData.circles as Circle[], members: seedData.members as Member[] });
 
@@ -34,7 +42,26 @@ export const MIN_COUNT = 2;
 export const peersOf = (members: Member[], programId: string, metro: string, excludeId?: string) =>
   members.filter((m) => m.counted && m.program_id === programId && m.metro === metro && m.id !== excludeId);
 
-export const circleFor = (circles: Circle[], programId: string, metro: string) => circles.find((c) => c.program_id === programId && c.metro === metro) ?? null;
+const LATAM = [
+  "mexico", "guatemala", "el salvador", "honduras", "nicaragua", "costa rica", "panama", "colombia", "venezuela", "ecuador", "peru",
+  "bolivia", "chile", "argentina", "uruguay", "paraguay", "cuba", "dominican republic", "puerto rico", "brazil", "belize",
+];
+const inCountry = (c: string, country: string) => (c === "latam" ? LATAM.includes(country) : fold(c) === country);
+
+/** The most specific group for her. A named country beats the region, a named state beats anywhere. Deterministic. */
+export function groupFor(circles: Circle[], who: Who): Circle | null {
+  const country = fold(who.country_of_training ?? "");
+  const hits = circles.filter(
+    (c) =>
+      !!who.profession && c.match.professions.includes(who.profession) &&
+      c.match.countries.some((x) => inCountry(x, country)) &&
+      (!c.match.states || (!!who.us_state && c.match.states.includes(who.us_state))),
+  );
+  const score = (c: Circle) => (c.match.countries.includes("latam") ? 0 : 2) + (c.match.states ? 1 : 0);
+  return hits.sort((a, b) => score(b) - score(a))[0] ?? null;
+}
+
+export const groupName = (lang: Lang, c: Circle) => sayL10n(lang, c.name);
 
 export const metroName = (lang: Lang, metro: string) => (`metro.${metro}` in COPY ? say(lang, `metro.${metro}` as CopyKey) : metro);
 
@@ -42,16 +69,18 @@ export const metroName = (lang: Lang, metro: string) => (`metro.${metro}` in COP
 export const countAsk = (lang: Lang, name: string, program: Program, metro: string) =>
   say(lang, "count.ask", { name, program: sayL10n(lang, program.short), metro: metroName(lang, metro) });
 
-/** The JOIN offer. Two messages, the count then the consent copy. Null when fewer than two others are counted. */
-export function joinOffer(lang: Lang, members: Member[], program: Program, metro: string, selfId?: string): string[] | null {
+/** How many others from her program and metro are counted. Null below two. */
+export function countLine(lang: Lang, members: Member[], program: Program, metro: string, selfId?: string): string | null {
   const n = peersOf(members, program.id, metro, selfId).length;
-  if (n < MIN_COUNT) return null;
-  return [say(lang, "count.line", { count: n, program: sayL10n(lang, program.short), metro: metroName(lang, metro) }), say(lang, "join.offer")];
+  return n < MIN_COUNT ? null : say(lang, "count.line", { count: n, program: sayL10n(lang, program.short), metro: metroName(lang, metro) });
 }
 
-export function joinReply(lang: Lang, circle: Circle | null, program: Program, metro: string, pageUrl: string): string {
-  if (!circle?.invite_link) return say(lang, "join.no_link", { program: sayL10n(lang, program.short), metro: metroName(lang, metro) });
-  return say(lang, "join.link", { link: circle.invite_link, page: pageUrl });
+/** The group, offered after her documents are read. Says plainly that WhatsApp groups show numbers, and offers the private way too. */
+export const groupOffer = (lang: Lang, c: Circle, portalUrl: string) => say(lang, "group.offer", { name: groupName(lang, c), url: portalUrl });
+
+export function joinReply(lang: Lang, c: Circle | null, pageUrl: string): string {
+  if (!c?.invite_link) return say(lang, "join.no_link");
+  return say(lang, "join.link", { link: c.invite_link, page: pageUrl });
 }
 
 /**

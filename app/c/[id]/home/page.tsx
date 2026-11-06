@@ -11,15 +11,14 @@ import { t } from "@/lib/i18n";
 
 type Step = { kind: string; text: string; why: string; has_draft: boolean };
 type Community = {
-  program: string | null;
-  metro: string | null;
-  counted: boolean;
-  chat_joined: boolean;
-  synthetic: boolean;
-  state: "unknown" | "ask" | "counted";
+  state: "none" | "open" | "joined";
+  group_name: string | null;
+  group_link: string | null;
   count_line: string | null;
-  has_group?: boolean;
-  circle_url: string | null;
+  chat_joined: boolean;
+  in_group: boolean;
+  synthetic: boolean;
+  circle_url: string;
 };
 type Portal = {
   header: Header;
@@ -111,40 +110,28 @@ export default function Home() {
 
       <section className="section">
         <h2>{say(lang, "portal.people")}</h2>
-        {cm.state === "unknown" && <p className="small muted">{say(lang, "portal.people.unknown")}</p>}
-        {cm.state !== "unknown" && <p>{cm.count_line ?? say(lang, "portal.people.alone", { program: cm.program ?? "", metro: cm.metro ?? "" })}</p>}
+        {cm.state === "none" && <p className="small muted">{say(lang, "portal.people.unknown")}</p>}
+        {cm.count_line && <p>{cm.count_line}</p>}
 
-        {cm.state === "ask" && (
+        {cm.state !== "none" && cm.group_name && (
           <>
-            <p className="small">{say(lang, "portal.count_ask", { program: cm.program ?? "", metro: cm.metro ?? "" })}</p>
-            <button className="link sans" disabled={busy} onClick={() => act("count")}>{say(lang, "portal.count_button")}</button>
-          </>
-        )}
-
-        {cm.state === "counted" && (
-          <>
-            <p className="small muted">{say(lang, "portal.counted")}</p>
-            {cm.chat_joined ? (
-              <Link className="link sans" href={cm.circle_url ?? "#"}>{say(lang, "portal.open_circle")}</Link>
-            ) : (
-              <>
-                <p className="small" style={{ marginTop: 12 }}>{say(lang, "portal.choose")}</p>
-                <div className="item small" style={{ display: "block" }}>
-                  <p style={{ marginBottom: 4 }}>{say(lang, "portal.chat_option")}</p>
-                  <button className="link sans" disabled={busy} onClick={() => act("chat_join", cm.circle_url ?? undefined)}>{say(lang, "portal.chat_button")}</button>
-                </div>
-                <div className="item small" style={{ display: "block" }}>
-                  <p style={{ marginBottom: 4 }}>{say(lang, "portal.group_option")}</p>
-                  {cm.has_group
-                    ? <button className="link sans" disabled={busy} onClick={() => act("group", cm.circle_url ?? undefined)}>{say(lang, "portal.group_button")}</button>
-                    : <span className="muted">{say(lang, "portal.group_pending")}</span>}
-                </div>
-              </>
+            {cm.state === "open" && <p className="small" style={{ marginTop: 12 }}>{say(lang, "portal.choose")}</p>}
+            <div className="item small" style={{ display: "block" }}>
+              <p style={{ marginBottom: 4 }}>{say(lang, "portal.chat_option")}</p>
+              {cm.chat_joined
+                ? <Link className="link sans" href={cm.circle_url}>{say(lang, "portal.open_circle")}</Link>
+                : <button className="link sans" disabled={busy} onClick={() => act("chat_join", cm.circle_url)}>{say(lang, "portal.chat_button")}</button>}
+            </div>
+            {cm.group_link && (
+              <div className="item small" style={{ display: "block" }}>
+                <p style={{ marginBottom: 4 }}>{say(lang, "portal.group_option", { name: cm.group_name })}</p>
+                <a className="link sans" href={cm.group_link} target="_blank" rel="noreferrer" onClick={() => { if (!cm.in_group) act("group"); }}>{say(lang, "portal.group_button")}</a>
+              </div>
             )}
-            <div className="row sans"><button className="link muted" disabled={busy} onClick={() => act("leave")}>{say(lang, "portal.leave")}</button></div>
+            {cm.state === "joined" && <div className="row sans"><button className="link muted" disabled={busy} onClick={() => act("leave")}>{say(lang, "portal.leave")}</button></div>}
           </>
         )}
-        {cm.synthetic && cm.state !== "unknown" && <p className="micro" style={{ marginTop: 12 }}>{say(lang, "portal.synthetic")}</p>}
+        {cm.synthetic && cm.count_line && <p className="micro" style={{ marginTop: 12 }}>{say(lang, "portal.synthetic")}</p>}
       </section>
     </Shell>
   );

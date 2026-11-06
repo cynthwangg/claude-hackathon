@@ -1,7 +1,7 @@
 import { fail, handle, ok, type Ctx } from "@/lib/http";
 import { circleView, communityAct, type CommunityAction } from "@/lib/portal";
 
-const ACTIONS: CommunityAction[] = ["count", "leave", "chat_join", "chat_leave", "group", "say"];
+const ACTIONS: CommunityAction[] = ["group", "chat_join", "chat_leave", "leave", "say"];
 
 export async function GET(_: Request, { params }: Ctx<{ id: string }>) {
   return handle(async () => ok(await circleView((await params).id)));

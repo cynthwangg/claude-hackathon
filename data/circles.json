@@ -1,19 +1,29 @@
 {
-  "note": "Hack day tier (section 35.2). One hand made WhatsApp group per program and metro. Paste the group's invite link into invite_link. Every member below is synthetic, for the demo only.",
+  "note": "Hand made WhatsApp groups (spec 35.2, hack day tier). Matched by profession, country of training and state, most specific first. The same group also has a conversation inside Earned where members see first names only. Members below are synthetic, for the demo.",
   "circles": [
     {
-      "id": "mx_sep_lep_1997.sf_bay_area.1",
-      "program_id": "mx_sep_lep_1997",
-      "metro": "sf_bay_area",
-      "tier": "manual",
-      "invite_link": null
+      "id": "mx_teachers_ca",
+      "name": { "es": "Maestras formadas en México, California", "en": "Mexico-trained teachers, California", "zh": "墨西哥培养的教师，加州" },
+      "invite_link": "https://chat.whatsapp.com/DwQlpz81dWEAGv0Iz2hAwe",
+      "match": { "professions": ["teacher"], "countries": ["Mexico"], "states": ["CA"] }
     },
     {
-      "id": "cn_moe_teacher_ed_2011.sf_bay_area.1",
-      "program_id": "cn_moe_teacher_ed_2011",
-      "metro": "sf_bay_area",
-      "tier": "manual",
-      "invite_link": null
+      "id": "cn_teachers_ca",
+      "name": { "zh": "中国培训教师，加州", "en": "China-trained teachers, California", "es": "Maestras formadas en China, California" },
+      "invite_link": "https://chat.whatsapp.com/GaD9BNCJSfqAqwcyzkHo3l",
+      "match": { "professions": ["teacher"], "countries": ["China"], "states": ["CA"] }
+    },
+    {
+      "id": "latam_teachers_us",
+      "name": { "es": "Maestras formadas en Latinoamérica, EE. UU.", "en": "Latin America-trained teachers, USA", "zh": "拉丁美洲培养的教师，美国" },
+      "invite_link": "https://chat.whatsapp.com/HTbqbv6098lKa5BO89LnlN",
+      "match": { "professions": ["teacher"], "countries": ["latam"], "states": null }
+    },
+    {
+      "id": "latam_nurses_us",
+      "name": { "es": "Enfermeras formadas en Latinoamérica, EE. UU.", "en": "Latin America-trained nurses, USA", "zh": "拉丁美洲培养的护士，美国" },
+      "invite_link": "https://chat.whatsapp.com/EhUb1H9qarN2rZDQWgQXnV",
+      "match": { "professions": ["nurse"], "countries": ["latam"], "states": null }
     }
   ],
   "members": [

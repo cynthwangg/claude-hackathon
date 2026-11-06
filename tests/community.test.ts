@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { programById } from "@/data/programs";
 import { addDays } from "@/lib/clock";
-import { agree, circleFor, circlePosts, countAsk, introCandidate, introMessages, joinOffer, joinReply, peerTiming, seed, type Intro } from "@/lib/circle";
+import { agree, circlePosts, countAsk, countLine, groupFor, groupOffer, introCandidate, introMessages, joinReply, peerTiming, seed, type Intro } from "@/lib/circle";
 import { matchWord, makeOffer, receipt, sha256, wordOf } from "@/lib/confirm";
 import { COPY } from "@/lib/copy";
 import { analyze } from "@/lib/engine/analyze";
@@ -59,16 +59,29 @@ describe("program registry", () => {
 
 describe("circle", () => {
   it("counts only opted-in members, never fewer than two", () => {
-    const offer = joinOffer("en", members, MX, "sf_bay_area")!;
-    expect(offer[0]).toMatch(/^3 women/);
-    expect(offer[1]).toContain("everyone sees everyone's number");
-    expect(joinOffer("en", members.slice(0, 1), MX, "sf_bay_area")).toBeNull();
-    expect(joinOffer("en", members, MX, "la")).toBeNull();
+    expect(countLine("en", members, MX, "sf_bay_area")).toMatch(/^3 women/);
+    expect(countLine("en", members.slice(0, 1), MX, "sf_bay_area")).toBeNull();
+    expect(countLine("en", members, MX, "la")).toBeNull();
   });
 
-  it("sends a link only when the group exists", () => {
-    expect(joinReply("es", circleFor(circles, MX.id, "sf_bay_area"), MX, "sf_bay_area", "http://x/circle")).toContain("todavía se está armando");
-    expect(joinReply("en", { ...circles[0], invite_link: "https://chat.whatsapp.com/abc" }, MX, "sf_bay_area", "http://x/circle")).toContain("https://chat.whatsapp.com/abc");
+  it("picks the most specific WhatsApp group for her", () => {
+    const g = (profession: string, country: string, us_state: string | null) => groupFor(circles, { profession, country_of_training: country, us_state })?.id ?? null;
+    expect(g("teacher", "Mexico", "CA")).toBe("mx_teachers_ca");
+    expect(g("teacher", "Mexico", "TX")).toBe("latam_teachers_us");
+    expect(g("teacher", "Colombia", "CA")).toBe("latam_teachers_us");
+    expect(g("teacher", "China", "CA")).toBe("cn_teachers_ca");
+    expect(g("teacher", "China", "NY")).toBeNull();
+    expect(g("nurse", "Peru", "IL")).toBe("latam_nurses_us");
+    expect(g("engineer", "Mexico", "CA")).toBeNull();
+  });
+
+  it("says plainly that a WhatsApp group shows numbers, and offers the private way", () => {
+    const offer = groupOffer("en", circles[0], "http://x/c/1/home");
+    expect(offer).toContain("Mexico-trained teachers, California");
+    expect(offer).toContain("everyone sees everyone's number");
+    expect(offer).toContain("first name only");
+    expect(joinReply("en", circles[0], "http://x/circle")).toContain("https://chat.whatsapp.com/");
+    expect(joinReply("es", { ...circles[0], invite_link: null }, "http://x/circle")).toContain("todavía se está armando");
   });
 
   it("tells her how long the school letter took others, as a range", () => {

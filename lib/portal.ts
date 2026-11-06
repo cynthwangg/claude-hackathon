@@ -1,7 +1,7 @@
 import type { Program } from "@/data/programs";
 import type { Lang } from "@/rules/types";
 import { analysisOf, evaluateAndSync, loadCase, type LoadedCase } from "./case";
-import { circleFor, circlePosts, joinOffer, metroName, seed, type Step } from "./circle";
+import { circlePosts, countLine, groupFor, groupName, seed, type Step } from "./circle";
 import { allMembers, load, memberOf, memoryOf, update, upsertMember, type ClosedStep } from "./communityStore";
 import { say, sayL10n } from "./copy";
 import { db } from "./db";
@@ -20,7 +20,6 @@ type C = NonNullable<LoadedCase>;
 const SANDBOX = "whatsapp:+14155238886";
 const baseUrl = () => (process.env.PUBLIC_BASE_URL ?? "http://localhost:3000").replace(/\/$/, "");
 const LEAD_TTL_MS = 10 * 60 * 1000;
-const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
 const STEP_OF: Record<string, Step> = { request_school_letter: "school_letter", request_evaluation: "evaluation", respond_ctc_letter: "ctc_reply", live_scan: "live_scan" };
 const DONE_STATES = ["document_obtained", "submitted", "accepted"];
@@ -54,22 +53,24 @@ const waLink = (lang: Lang) => {
   return `https://wa.me/${from}?text=${encodeURIComponent(say(lang, "portal.wa_prefill"))}`;
 };
 
+/** Her WhatsApp group, by profession, country and state. Works with or without a recognised program. */
+export const groupOf = (c: C) =>
+  groupFor(seed().circles, { profession: c.intakeObj.profession, country_of_training: c.intakeObj.country_of_training, us_state: c.intakeObj.us_state });
+
 export async function communityView(c: C, program: Program | null) {
   const lang = c.lang;
   const metro = metroFor(c.intakeObj.city);
+  const group = groupOf(c);
   const s = await load();
   const me = memberOf(s, c.id);
-  const members = allMembers(s);
-  const base = { program: program ? sayL10n(lang, program.short) : null, metro: metro ? metroName(lang, metro) : null, counted: !!me?.counted, chat_joined: !!me?.chat_joined, synthetic: seed().members.some((m) => m.synthetic) };
-  if (!program || !metro) return { ...base, state: "unknown" as const, count_line: null, offer: null, circle_url: null };
-  const others = joinOffer(lang, members, program, metro, c.id);
-  const circle = circleFor(seed().circles, program.id, metro);
   return {
-    ...base,
-    state: me?.counted ? ("counted" as const) : ("ask" as const),
-    count_line: others?.[0] ?? null,
-    offer: others?.[1] ?? null,
-    has_group: !!circle?.invite_link,
+    state: !group ? ("none" as const) : me?.chat_joined || me?.group_link_sent_at ? ("joined" as const) : ("open" as const),
+    group_name: group ? groupName(lang, group) : null,
+    group_link: group?.invite_link ?? null,
+    count_line: program && metro ? countLine(lang, allMembers(s), program, metro, c.id) : null,
+    chat_joined: !!me?.chat_joined,
+    in_group: !!me?.group_link_sent_at,
+    synthetic: seed().members.some((m) => m.synthetic),
     circle_url: `/c/${c.id}/circle`,
   };
 }
@@ -126,62 +127,56 @@ export async function circleView(caseId: string) {
   const c = await loadCase(caseId);
   if (!c) throw new Error("case_not_found");
   const lang = c.lang;
+  const header = await caseHeader(c);
+  const group = groupOf(c);
+  if (!group) return { header, ready: false as const };
   const program = programFor(c, analysisOf(c));
   const metro = metroFor(c.intakeObj.city);
-  const header = await caseHeader(c);
-  if (!program || !metro) return { header, ready: false as const };
   const s = await load();
   const me = memberOf(s, c.id);
-  const circle = circleFor(seed().circles, program.id, metro);
-  const circleId = circle?.id ?? `${program.id}.${metro}`;
   const today = new Date(`${header.today}T12:00:00Z`);
   return {
     header,
     ready: true as const,
-    title: capitalize(say(lang, "circle.title", { program: sayL10n(lang, program.short), metro: metroName(lang, metro) })),
-    counted: !!me?.counted,
+    title: groupName(lang, group),
     chat_joined: !!me?.chat_joined,
-    has_group: !!circle?.invite_link,
-    group_link: me?.group_link_sent_at && circle?.invite_link ? circle.invite_link : null,
-    posts: circlePosts(lang, program, allMembers(s), metro, today),
-    chat: me?.chat_joined ? s.chat.filter((m) => m.circle_id === circleId).slice(-100).map((m) => ({ id: m.id, mine: m.case_id === c.id, name: m.first_name, text: m.text, at: m.at })) : [],
-    count_line: joinOffer(lang, allMembers(s), program, metro, c.id)?.[0] ?? null,
-    circle_id: circleId,
+    group_link: group.invite_link,
+    posts: program && metro ? circlePosts(lang, program, allMembers(s), metro, today) : [],
+    chat: me?.chat_joined ? s.chat.filter((m) => m.circle_id === group.id).slice(-100).map((m) => ({ id: m.id, mine: m.case_id === c.id, name: m.first_name, text: m.text, at: m.at })) : [],
+    count_line: program && metro ? countLine(lang, allMembers(s), program, metro, c.id) : null,
   };
 }
 
-export type CommunityAction = "count" | "leave" | "chat_join" | "chat_leave" | "group" | "say";
+export type CommunityAction = "group" | "chat_join" | "chat_leave" | "leave" | "say";
 
-/** Every opt-in is its own act. Joining the chat or the group needs being counted first, so consent is always stepwise. */
+/**
+ * Each act is hers. Opening the WhatsApp group or joining the conversation in Earned also counts her, by program and
+ * area only, because she has chosen to be found. LEAVE removes her from both and from every count.
+ */
 export async function communityAct(caseId: string, action: CommunityAction, text?: string) {
   const c = await loadCase(caseId);
   if (!c) throw new Error("case_not_found");
+  const group = groupOf(c);
+  if (!group) throw new Error("bad_state");
   const program = programFor(c, analysisOf(c));
   const metro = metroFor(c.intakeObj.city);
-  if (!program || !metro) throw new Error("bad_state");
   const first = c.intakeObj.first_name ?? c.first_name;
   const phone = await whatsappOf(c.id);
-  const circle = circleFor(seed().circles, program.id, metro);
-  const circleId = circle?.id ?? `${program.id}.${metro}`;
 
   await update((s) => {
     const me = memberOf(s, c.id);
-    const base = { case_id: c.id, first_name: first, phone, program_id: program.id, metro, closed: closedSteps(c.actions) };
-    if (action === "count") return void upsertMember(s, { ...base, counted: true });
+    const base = { case_id: c.id, first_name: first, phone, program_id: program?.id ?? `group:${group.id}`, metro: metro ?? "", closed: closedSteps(c.actions), counted: true };
+    if (action === "group") return void upsertMember(s, { ...base, group_link_sent_at: new Date().toISOString() });
+    if (action === "chat_join") return void upsertMember(s, { ...base, chat_joined: true });
     if (action === "leave") {
       s.members = s.members.filter((m) => m.case_id !== c.id);
       return;
     }
-    if (!me?.counted) throw new Error("bad_state");
-    if (action === "chat_join") return void upsertMember(s, { ...me, chat_joined: true });
+    if (!me) throw new Error("bad_state");
     if (action === "chat_leave") return void upsertMember(s, { ...me, chat_joined: false });
-    if (action === "group") return void upsertMember(s, { ...me, group_link_sent_at: new Date().toISOString() });
-    if (action === "say") {
-      const body = (text ?? "").trim().slice(0, 1000);
-      if (!body || !me.chat_joined) throw new Error("bad_value");
-      s.chat.push({ id: `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`, circle_id: circleId, case_id: c.id, first_name: first, text: body, at: new Date().toISOString() });
-    }
+    const body = (text ?? "").trim().slice(0, 1000);
+    if (!body || !me.chat_joined) throw new Error("bad_value");
+    s.chat.push({ id: `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`, circle_id: group.id, case_id: c.id, first_name: first, text: body, at: new Date().toISOString() });
   });
-  return action === "say" || action === "chat_join" || action === "chat_leave" || action === "group" ? circleView(caseId) : portalView(caseId);
+  return action === "leave" ? portalView(caseId) : circleView(caseId);
 }
-

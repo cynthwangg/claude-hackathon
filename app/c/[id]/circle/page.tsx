@@ -15,9 +15,7 @@ type View =
       header: Header;
       ready: true;
       title: string;
-      counted: boolean;
       chat_joined: boolean;
-      has_group: boolean;
       group_link: string | null;
       posts: string[];
       chat: Msg[];
@@ -74,22 +72,24 @@ export default function CirclePage() {
       <section className="section first">
         <h1 style={{ marginTop: 0 }}>{v.title}</h1>
         {v.count_line && <p className="small">{v.count_line}</p>}
-        {v.group_link && <p className="small"><a className="link" href={v.group_link} target="_blank" rel="noreferrer">{v.group_link}</a></p>}
+        {v.group_link && <p className="small">{say(lang, "circle.on_whatsapp")} <a className="link sans" href={v.group_link} target="_blank" rel="noreferrer">{v.title}</a></p>}
         {back}
       </section>
 
-      <section className="section">
-        <h2>{say(lang, "circle.notes")}</h2>
-        {v.posts.map((p) => <p key={p} className="small" style={{ whiteSpace: "pre-line" }}>{p}</p>)}
-        <p className="micro">{say(lang, "circle.from_earned")}</p>
-      </section>
+      {v.posts.length > 0 && (
+        <section className="section">
+          <h2>{say(lang, "circle.notes")}</h2>
+          {v.posts.map((p) => <p key={p} className="small" style={{ whiteSpace: "pre-line" }}>{p}</p>)}
+          <p className="micro">{say(lang, "circle.from_earned")}</p>
+        </section>
+      )}
 
       <section className="section">
         <h2>{say(lang, "circle.chat")}</h2>
-        {!v.counted || !v.chat_joined ? (
+        {!v.chat_joined ? (
           <>
             <p className="small muted">{say(lang, "circle.not_joined")}</p>
-            {v.counted ? <button className="link sans" disabled={busy} onClick={() => act("chat_join")}>{say(lang, "portal.chat_button")}</button> : back}
+            <button className="link sans" disabled={busy} onClick={() => act("chat_join")}>{say(lang, "portal.chat_button")}</button>
           </>
         ) : (
           <>
@@ -108,7 +108,7 @@ export default function CirclePage() {
               }}
             >
               <label className="sr" htmlFor="circle-text">{say(lang, "circle.placeholder")}</label>
-              <textarea id="circle-text" rows={3} value={text} onChange={(e) => setText(e.target.value)} placeholder={say(lang, "circle.placeholder")} style={{ width: "100%", font: "inherit", padding: 10, border: "1px solid var(--rule)", background: "#fff", borderRadius: 0 }} />
+              <textarea id="circle-text" rows={3} value={text} onChange={(e) => setText(e.target.value)} placeholder={say(lang, "circle.placeholder")} style={{ width: "100%", font: "inherit", padding: 10, border: "1px solid var(--muted)", background: "var(--field)", color: "var(--ink)", borderRadius: 0 }} />
               <div className="row">
                 <button className="btn" type="submit" disabled={busy || !text.trim()}>{say(lang, "circle.send")}</button>
                 <span className="micro">{say(lang, "circle.first_name_only")}</span>
