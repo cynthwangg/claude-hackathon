@@ -5,6 +5,8 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 PORT=3100
 export DATABASE_URL="file:./gate.db" MODEL_PROVIDER=mock DEMO_TODAY=2026-11-05
+# The gate tests WhatsApp over TwiML on localhost. Blank the Twilio keys so a filled .env cannot switch it to the REST path.
+export TWILIO_ACCOUNT_SID="" TWILIO_AUTH_TOKEN="" PUBLIC_WEBHOOK_URL=""
 
 echo "== unit, scenario and blocker tests"
 npx vitest run

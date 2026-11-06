@@ -87,4 +87,10 @@ export const mockProvider: ModelProvider = {
   async translateLetter() {
     return "";
   },
+  async chatTurn(lang, _history, _brief, topic) {
+    // Test mode. The real provider answers with Claude from her case file; this only proves the thread and the topic.
+    if (lang === "es") return `Modo de prueba, tema ${topic}. Con Claude conectado, aquí te respondo a partir de tu caso.`;
+    if (lang === "zh") return `测试模式，主题 ${topic}。连接 Claude 后，我会根据你的情况在这里回答。`;
+    return `Test mode, topic ${topic}. With Claude connected, I answer here from your case file.`;
+  },
 };

@@ -14,6 +14,8 @@ model Case {
   first_name String?
   intake     String     @default("{}")
   history    String     @default("[]")
+  /// What the shared agent is talking about with her: menu, case, roles, visa, resume. Null is the case.
+  topic      String?
   office     String?
   facts      Fact[]
   documents  Document[]

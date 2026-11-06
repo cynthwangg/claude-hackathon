@@ -22,7 +22,7 @@ const LANG_NAME: Record<Lang, string> = {
   zh: "Simplified Chinese, addressing her as 你",
 };
 
-const STYLE = `Write like a competent person who has read her file. Short sentences. No colons in running text, no exclamation marks, no em dashes, no emoji. Never write "Great", "Let's", "Simply", "Just", "Welcome back".`;
+const STYLE = `Sound like a warm, friendly person who knows the system and has read her file. Talk the way people text. In English use contractions, I'm, you're, it's, don't, we'll. Use plain, everyday words that someone still learning the language understands on first read, and explain any official term in a few simple words. Short sentences, one idea each. Put each idea in its own short paragraph of one or two sentences, with a blank line between paragraphs. If you ask a question, put it alone in the last paragraph. Use only periods, commas and question marks. No colons in running text, no semicolons, no em dashes or en dashes, no middle dots, no ellipses, no parentheses, no exclamation marks, no emoji. Never write "Great", "Let's", "Simply", "Just", "Welcome back".`;
 
 async function imageBlock(file: FileInput) {
   const out = await sharp(file.bytes).rotate().resize({ width: 1600, height: 1600, fit: "inside", withoutEnlargement: true }).jpeg({ quality: 85 }).toBuffer();
@@ -38,6 +38,18 @@ function check<T extends { stop_reason: string | null }>(m: T): T {
   if (m.stop_reason === "refusal") throw new ModelError("refusal");
   if (m.stop_reason === "max_tokens") throw new ModelError("max_tokens");
   return m;
+}
+
+/** The Messages API wants user first and roles alternating; the shared thread can hold two of hers in a row. */
+function alternating(history: Turn[]) {
+  const out: { role: "user" | "assistant"; content: string }[] = [];
+  for (const h of history.slice(-24)) {
+    const last = out[out.length - 1];
+    if (last && last.role === h.role) last.content += `\n\n${h.text}`;
+    else out.push({ role: h.role, content: h.text });
+  }
+  if (out[0]?.role !== "user") out.unshift({ role: "user", content: "(She opened the conversation.)" });
+  return out;
 }
 
 function text(m: { content: Array<{ type: string; text?: string }> }) {
@@ -79,7 +91,7 @@ export const anthropicProvider: ModelProvider = {
   },
 
   async intakeTurn(lang, history: Turn[], intake: Intake, missing: string[]): Promise<IntakeReply> {
-    const system = `You run the first conversation of Earned, a guide for women whose degree, license and work history were earned in another country.
+    const system = `You run the first conversation of Bridge, a guide for women whose degree, license and work history were earned in another country.
 
 Your only job is to learn her situation and fill the intake object. She may write in any language and mention anything. Read everything she says and fill every field it supports. Never ask for something she already said.
 
@@ -121,6 +133,43 @@ The intake so far, as JSON: ${JSON.stringify(intake)}`;
         output_config: { effort: "low" },
         system: `Write a plain reading aid in ${LANG_NAME[lang]} for the official text she received. Say what it says and what it asks for, item by item, in her language. Keep official terms in English in parentheses the first time, because she will see them on forms. Add no advice and no opinion about whether she qualifies. Do not add facts that are not in the text. Plain text, no markdown. ${STYLE}`,
         messages: [{ role: "user", content: officialText }],
+      }),
+    );
+    return text(res);
+  },
+
+  async chatTurn(lang, history, caseBrief, topic) {
+    const system = `You are Bridge, a guide for a woman who trained and worked in another country and is getting her profession recognized in the United States, and finding work while she does. You talk with her on the web and on WhatsApp. It is one conversation and one case.
+
+Her case file is below. Use it. Never ask for something it already says.
+
+What you help with
+- Her case. Explain what a document, a requirement or a letter means, what the case file says she already has, what is still needed and what this week's action is.
+- Roles. Work that uses her training and experience now, while the credential is in progress, and the search to run today.
+- Visa and work rights. General information only. Say once that it is general information and not legal advice, and name who can advise her (an immigration attorney, or a DOJ accredited representative at a nonprofit).
+- Her resume. How titles, numbers and local norms translate to the US market. Ask her to paste what she has.
+
+Rules you never break
+- Never say she is eligible, qualifies, will be accepted or approved, or that an office or agency has decided anything the case file does not show. The office that decides, decides. Say so.
+- Never invent fees, dates, deadlines, phone numbers or links. Use only those in the case file.
+- Never ask about her immigration status, and never ask for an SSN, ITIN or any ID number.
+- Never tell her to pay for anything, and never offer to send, submit or pay on her behalf.
+- If the case file cannot answer a question about her case, say what is unknown and who can answer it.
+
+Be warm, specific and practical. Name real actions, not encouragement. Keep it short enough to read on a phone without scrolling, under about 70 words unless she asks for detail. Never paste long links, the web page has them. End with one clear next step or one question. Plain text, no markdown, no lists longer than four lines.
+
+${topic === "general" ? `She has not told you her situation yet. If she only greeted you, greet her back warmly in one short sentence, in the spirit of Hi, I'm glad you're here, say in one sentence what you can help with (getting the profession she trained for recognized here, work that fits her experience now, general questions about visas and work rights, her resume), and ask what she trained as, in which country, and where she lives now. If she asked something, answer it briefly in general terms first, then ask that same question in one sentence. Under 70 words. No numbered menu.` : `The current topic is ${topic}.`} Write in ${LANG_NAME[lang]}. ${STYLE}
+
+Her case file
+${caseBrief}`;
+    const res = check(
+      await api().beta.messages.create({
+        model: MODEL,
+        max_tokens: 2000,
+        ...FALLBACK,
+        output_config: { effort: "low" },
+        system,
+        messages: alternating(history),
       }),
     );
     return text(res);

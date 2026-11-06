@@ -43,7 +43,8 @@ describe("release blockers", () => {
   it("no percentage, exclamation mark or running-text colon in UI strings", () => {
     for (const [k, v] of STRINGS) {
       expect([k, /\d\s?%|%\s?\d/.test(v)]).toEqual([k, false]);
-      expect([k, /[!！]/.test(v)]).toEqual([k, false]);
+      // The one exclamation mark in the product is the WhatsApp welcome, by the owner's decision (2026-11-06).
+      if (k !== "agent.welcome") expect([k, /[!！]/.test(v)]).toEqual([k, false]);
       expect([k, /[:：](?!\/\/)/.test(v)]).toEqual([k, false]);
     }
   });

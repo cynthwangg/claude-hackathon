@@ -1,19 +1,28 @@
 import crypto from "node:crypto";
 import type { Lang } from "@/rules/types";
-import { analysisOf, createCase, ingestDocument, intakeMessage, loadCase, ACCEPTED_MIME } from "./case";
+import { agentTurn } from "./agent";
+import { analysisOf, createCase, ingestDocument, loadCase, ACCEPTED_MIME } from "./case";
 import { db } from "./db";
-import { fmtDate, t } from "./i18n";
+import { fmtDate, guessLang, t } from "./i18n";
+export { guessLang };
 import { requestOrder } from "./intake/router";
 import { positionView, weekView, caseHeader } from "./views";
 
-/** Twilio's webhook form fields that the product uses. */
-export type Inbound = { from: string; body: string; numMedia: number; media: { url: string; type: string }[]; sid: string | null };
+/** Twilio's webhook form fields that the product uses. `to` is our own WhatsApp number, the one she wrote to. */
+export type Inbound = { from: string; to: string; body: string; numMedia: number; media: { url: string; type: string }[]; sid: string | null };
+
+const WA_ADDRESS = /^whatsapp:\+\d{6,16}$/;
+export const RESET = /^(reset|restart|start over|start again|new case|reiniciar|empezar de nuevo|borrar|重新开始|重来|重置)[\s.!?¡¿。！？]*$/i;
+const SANDBOX_FROM = "whatsapp:+14155238886";
 
 export function parseInbound(form: URLSearchParams): Inbound {
   const n = Number(form.get("NumMedia") ?? "0") || 0;
   const media = Array.from({ length: Math.min(n, 10) }, (_, i) => ({ url: form.get(`MediaUrl${i}`) ?? "", type: (form.get(`MediaContentType${i}`) ?? "").toLowerCase() })).filter((m) => m.url);
-  return { from: form.get("From") ?? "", body: (form.get("Body") ?? "").trim(), numMedia: n, media, sid: form.get("MessageSid") };
+  return { from: form.get("From") ?? "", to: form.get("To") ?? "", body: (form.get("Body") ?? "").trim(), numMedia: n, media, sid: form.get("MessageSid") };
 }
+
+/** We answer from the number she wrote to, so the sandbox and a real sender both work without config. */
+export const replyFrom = (msg: Pick<Inbound, "to">) => (WA_ADDRESS.test(msg.to) ? msg.to : process.env.TWILIO_WHATSAPP_FROM || SANDBOX_FROM);
 
 /** X-Twilio-Signature. HMAC-SHA1 of the exact public URL plus the sorted POST parameters, keyed with the auth token. */
 export function twilioSignature(token: string, url: string, params: URLSearchParams) {
@@ -32,15 +41,11 @@ export function signatureOk(token: string, url: string, params: URLSearchParams,
 const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 export const twiml = (messages: string[]) => `<?xml version="1.0" encoding="UTF-8"?><Response>${messages.slice(0, 4).map((m) => `<Message>${esc(m.slice(0, 1600))}</Message>`).join("")}</Response>`;
 
-/** A first guess at her language from the first message, before the intake model confirms it. */
-export function guessLang(text: string): Lang {
-  if (/[一-鿿]/.test(text)) return "zh";
-  if (/[ñáéíóú¿¡]|\b(hola|soy|maestra|tengo|vivo|estudi[eé]|años|carta)\b/i.test(text)) return "es";
-  return "en";
-}
 
 const baseUrl = () => (process.env.PUBLIC_BASE_URL ?? "http://localhost:3000").replace(/\/$/, "");
 const webLink = (caseId: string) => `${baseUrl()}/c/${caseId}/position`;
+/** The same case's document page, so she can upload from the browser when sending media in the chat is not possible. */
+const uploadLink = (caseId: string) => `${baseUrl()}/c/${caseId}/documents`;
 
 async function channelFor(address: string, firstText: string) {
   const existing = await db.channel.findUnique({ where: { address } });
@@ -61,17 +66,18 @@ async function requestLine(caseId: string): Promise<string | null> {
   if (!next) return null;
   const noun = t(c.lang, next === "license" && c.routing.kind === "none" ? "noun.license_generic" : `noun.${next}`);
   const looks = t(c.lang, `ask.${next}.looks`);
-  return `${t(c.lang, read.size ? "docs.next" : "docs.first", { noun })} ${looks.startsWith("ask.") ? "" : looks} ${t(c.lang, "wa.send_photo")}`.replace(/\s+/g, " ").trim();
+  const ask = `${t(c.lang, read.size ? "docs.next" : "docs.first", { noun })} ${looks.startsWith("ask.") ? "" : looks}`.replace(/\s+/g, " ").trim();
+  return `${ask}\n\n${t(c.lang, "wa.upload", { url: uploadLink(caseId) })}`;
 }
 
-/** Turns for text she sends. The same intake as the web; nothing else to write for WhatsApp. */
+/** Turns for text she sends. The same agent and the same thread as the web Ask page; only the intake's last turn is formatted for WhatsApp. */
 export async function handleText(caseId: string, text: string): Promise<string[]> {
-  const r = await intakeMessage(caseId, text);
+  const r = await agentTurn(caseId, { text }, "whatsapp");
   const c = (await loadCase(caseId))!;
   const lang = c.lang;
-  if (!r.done) return [r.say ?? t(lang, "error.generic")];
+  if (r.kind !== "intake_done") return [r.say ?? t(lang, "error.generic")];
   const h = await caseHeader(c);
-  const office = h.office ? `${t(lang, "office.title")} · ${h.office.name} · ${h.office.url}` : t(lang, "office.unknown_state");
+  const office = h.office ? `${t(lang, "office.title")}\n${h.office.name}\n${h.office.url}` : t(lang, "office.unknown_state");
   const orientation = h.pathway?.orientation ?? h.general_orientation;
   const ask = await requestLine(caseId);
   return [office, orientation, ask ?? t(lang, "wa.link", { url: webLink(caseId) })].filter(Boolean);
@@ -98,7 +104,7 @@ export async function handleMedia(caseId: string, media: { url: string; type: st
     const lines = doc.facts
       .filter((f) => !/\.present$|^transcript\.courses$|\.extra\.|lists_courses|documents_reviewed|ctc_letter\.items/.test(f.key))
       .slice(0, 6)
-      .map((f) => `${t(lang, `label.${f.key}`)} · ${Array.isArray(f.value) ? (f.value as string[]).filter((x) => /trabajo docente|pr[aá]ctica|实习|practicum|student teaching/i.test(x)).join(", ") || `${(f.value as string[]).length}` : typeof f.value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(f.value) ? fmtDate(lang, f.value) : String(f.value)}`);
+      .map((f) => `${t(lang, `label.${f.key}`)}: ${Array.isArray(f.value) ? (f.value as string[]).filter((x) => /trabajo docente|pr[aá]ctica|实习|practicum|student teaching/i.test(x)).join(", ") || `${(f.value as string[]).length}` : typeof f.value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(f.value) ? fmtDate(lang, f.value) : String(f.value)}`);
     out.push([t(lang, "docs.header", { noun: t(lang, `noun.${doc.kind}`) }), ...lines, t(lang, "wa.fix")].join("\n"));
   }
   if (out.some((x) => x.includes("\n"))) out.push(await statusMessage(caseId));
@@ -116,38 +122,78 @@ export async function statusMessage(caseId: string): Promise<string> {
   const have = [...p.have.map((l) => l.text), ...p.extra_have.map((x) => x.text)].slice(0, 3);
   const needed = p.needed.slice(0, 3).map((l) => l.text.split(". ")[0]);
   const parts = [
-    have.length ? `${t(lang, "position.have")}\n${have.map((x) => `· ${x}`).join("\n")}` : null,
-    needed.length ? `${t(lang, "position.needed")}\n${needed.map((x) => `· ${x}`).join("\n")}` : null,
-    ask ?? (c.routing.kind === "none" ? null : `${t(lang, "week.title")} · ${w.headline.text}`),
+    have.length ? `${t(lang, "position.have")}\n${have.map((x) => `- ${x}`).join("\n")}` : null,
+    needed.length ? `${t(lang, "position.needed")}\n${needed.map((x) => `- ${x}`).join("\n")}` : null,
+    ask ?? (c.routing.kind === "none" ? null : `${t(lang, "week.title")}\n${w.headline.text}`),
     t(lang, "wa.link", { url: webLink(caseId) }),
   ].filter(Boolean);
   return parts.join("\n\n");
 }
 
-/** Replies after the webhook returned, through the REST API, only to the number that wrote. One every three seconds. */
+/**
+ * Replies through the REST API, only to the number that wrote. One every three seconds, in order per number.
+ * The Twilio trial sandbox accepts the webhook but drops TwiML replies, so with credentials every reply goes this way.
+ * Twilio's error code is logged, never swallowed, so a dead sandbox session or a wrong From shows in the server log.
+ */
 const queues = new Map<string, Promise<void>>();
-export function sendLater(to: string, channelAddress: string, messages: string[]) {
+export function sendLater(to: string, channelAddress: string, messages: string[], from = process.env.TWILIO_WHATSAPP_FROM || SANDBOX_FROM) {
   if (to !== channelAddress) throw new Error("recipient_mismatch");
   const sid = process.env.TWILIO_ACCOUNT_SID;
   const token = process.env.TWILIO_AUTH_TOKEN;
-  const from = process.env.TWILIO_WHATSAPP_FROM ?? "whatsapp:+14155238886";
-  if (!sid || !token) return;
+  if (!sid || !token || !messages.length) return queues.get(to) ?? Promise.resolve();
   const prev = queues.get(to) ?? Promise.resolve();
   const next = prev.then(async () => {
     for (const body of messages.slice(0, 4)) {
-      await fetch(`https://api.twilio.com/2010-04-01/Accounts/${sid}/Messages.json`, {
+      const res = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${sid}/Messages.json`, {
         method: "POST",
         headers: { Authorization: `Basic ${Buffer.from(`${sid}:${token}`).toString("base64")}`, "Content-Type": "application/x-www-form-urlencoded" },
         body: new URLSearchParams({ From: from, To: to, Body: body.slice(0, 1600) }),
-      }).catch(() => null);
+      }).catch((e: unknown) => {
+        console.error("whatsapp: Twilio send failed", e instanceof Error ? e.message : e);
+        return null;
+      });
+      if (res && !res.ok) {
+        const j = (await res.json().catch(() => ({}))) as { code?: number; message?: string };
+        console.error(`whatsapp: Twilio send failed status=${res.status} code=${j.code ?? "?"} ${j.message ?? ""}`);
+      } else if (res) {
+        const j = (await res.json().catch(() => ({}))) as { sid?: string; status?: string };
+        console.log(`whatsapp: sent ${j.sid ?? "?"} status=${j.status ?? "?"}`);
+      }
       await new Promise((r) => setTimeout(r, 3000));
     }
   });
-  queues.set(to, next.catch(() => undefined));
+  const settled = next.catch(() => undefined);
+  queues.set(to, settled);
+  return settled;
+}
+
+/**
+ * Everything she gets back for one inbound message, in order, each batch recorded on her channel and handed to `send`.
+ * The quick acknowledgement ("Reading. One moment.") goes out before the slow reading finishes.
+ * Never throws. A failure becomes one short line in her language, so she is never left without an answer.
+ */
+export async function converse(msg: Inbound, send: (replies: string[], address: string) => unknown): Promise<void> {
+  const emit = async (replies: string[]) => {
+    if (!replies.length) return;
+    const channel = await db.channel.findUnique({ where: { address: msg.from } });
+    if (channel) await db.message.createMany({ data: replies.map((body) => ({ channel_id: channel.id, direction: "out", body })) });
+    await send(replies, channel?.address ?? msg.from);
+  };
+  try {
+    const { replies, later } = await inbound(msg);
+    await emit(replies);
+    if (later) await emit(await later);
+  } catch (e) {
+    console.error("whatsapp: reply failed", e);
+    if (!WA_ADDRESS.test(msg.from)) return;
+    const channel = await db.channel.findUnique({ where: { address: msg.from } }).catch(() => null);
+    const c = channel ? await loadCase(channel.case_id).catch(() => null) : null;
+    await Promise.resolve(send([t(c?.lang ?? guessLang(msg.body), "error.generic")], msg.from)).catch(() => undefined);
+  }
 }
 
 export async function inbound(msg: Inbound): Promise<{ replies: string[]; later?: Promise<string[]> }> {
-  if (!/^whatsapp:\+\d{6,16}$/.test(msg.from)) return { replies: [] };
+  if (!WA_ADDRESS.test(msg.from)) return { replies: [] };
   if (msg.sid) {
     const seen = await db.message.findUnique({ where: { provider_id: msg.sid } });
     if (seen) return { replies: [] };
@@ -161,6 +207,14 @@ export async function inbound(msg: Inbound): Promise<{ replies: string[]; later?
     return { replies: [t(c.lang, "wa.reading")], later: work };
   }
   if (!msg.body) return { replies: [] };
+  // Start over. Her number moves to a new, empty case; the old case stays as it was, reachable by its web link.
+  if (RESET.test(msg.body)) {
+    const lang = guessLang(msg.body) === "en" ? c.lang : guessLang(msg.body);
+    const fresh = await createCase(lang);
+    await db.channel.update({ where: { id: channel.id }, data: { case_id: fresh.id } });
+    await db.case.update({ where: { id: fresh.id }, data: { history: JSON.stringify([{ role: "assistant", text: t(lang, "agent.welcome") }]) } });
+    return { replies: [t(lang, "agent.welcome")] };
+  }
   if (/^(why|por qu[eé]|为什么)\??$/i.test(msg.body)) return { replies: [t(c.lang, "wa.why_web", { url: webLink(c.id) })] };
   if (/^(status|estado|进展|dónde estoy)\??$/i.test(msg.body) && c.documents.length) return { replies: [await statusMessage(c.id)] };
   return { replies: await handleText(c.id, msg.body) };

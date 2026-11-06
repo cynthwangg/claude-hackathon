@@ -9,5 +9,13 @@ export const EM_DASH = /\u2014/;
 /** Cleans a sentence the model wrote before it is shown to her. Returns null when it must not be shown. */
 export function guardModelText(s: string): string | null {
   if (ELIGIBILITY_CLAIM.test(s)) return null;
-  return s.replace(/\u2014|\u2013/g, ",").replace(/!/g, ".").replace(/\s+,/g, ",").trim();
+  return s
+    .replace(/\u2014|\u2013/g, ",")
+    .replace(/\s*;\s*/g, ". ")
+    .replace(/\s*[\u00b7\u2022]\s*/g, ", ")
+    .replace(/\u2026|\.\.\./g, ".")
+    .replace(/!/g, ".")
+    .replace(/\s+,/g, ",")
+    .replace(/^, /gm, "")
+    .trim();
 }

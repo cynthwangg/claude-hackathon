@@ -1,15 +1,23 @@
 import { after } from "next/server";
-import { db } from "@/lib/db";
 import { handle } from "@/lib/http";
-import { inbound, parseInbound, sendLater, signatureOk, twiml } from "@/lib/whatsapp";
+import { t } from "@/lib/i18n";
+import { converse, guessLang, parseInbound, replyFrom, sendLater, signatureOk, twiml } from "@/lib/whatsapp";
 
 export const maxDuration = 120;
 
 const xml = (body: string, status = 200) => new Response(body, { status, headers: { "Content-Type": "text/xml; charset=utf-8" } });
 
+/** Twilio gives up on a webhook after about 15 seconds; answer inside that. */
+const TWIML_BUDGET_MS = 12_000;
+
 /**
  * D25. One endpoint, the same case core as the web. Signed requests only when TWILIO_AUTH_TOKEN is set.
  * Without a token it accepts requests addressed to localhost only, so curl works and a tunnel without a token does not.
+ *
+ * Replies go back as TwiML by default. That works on any account, including one whose REST sending is blocked
+ * until Twilio's KYC review (error 20003, "Primary compliance profile is not approved"). If the work takes longer
+ * than Twilio waits, she gets what is ready plus a line asking her to write again, and the work finishes in the background.
+ * TWILIO_REPLY_MODE=rest (with SID and token) answers Twilio at once and sends every reply through the REST API instead.
  */
 export async function POST(req: Request) {
   return handle(async () => {
@@ -25,22 +33,20 @@ export async function POST(req: Request) {
     }
 
     const msg = parseInbound(params);
-    const { replies, later } = await inbound(msg);
-    const canSendLater = !!(process.env.TWILIO_ACCOUNT_SID && token);
 
-    if (later && !canSendLater) return xml(twiml([...replies, ...(await later)].slice(0, 4)));
-    if (later) {
-      after(async () => {
-        const out = await later.catch(() => [] as string[]);
-        const channel = await db.channel.findUnique({ where: { address: msg.from } });
-        if (channel && out.length) {
-          await db.message.createMany({ data: out.map((body) => ({ channel_id: channel.id, direction: "out", body })) });
-          sendLater(msg.from, channel.address, out);
-        }
-      });
+    if (process.env.TWILIO_REPLY_MODE === "rest" && process.env.TWILIO_ACCOUNT_SID && token) {
+      const from = replyFrom(msg);
+      after(() => converse(msg, (replies, address) => sendLater(msg.from, address, replies, from)));
+      return xml(twiml([]));
     }
-    const channel = await db.channel.findUnique({ where: { address: msg.from } });
-    if (channel && replies.length) await db.message.createMany({ data: replies.map((body) => ({ channel_id: channel.id, direction: "out", body })) });
-    return xml(twiml(replies));
+
+    const out: string[] = [];
+    const work = converse(msg, (replies) => out.push(...replies));
+    const late = await Promise.race([work.then(() => false), new Promise<boolean>((r) => setTimeout(() => r(true), TWIML_BUDGET_MS))]);
+    if (late) {
+      after(() => work);
+      return xml(twiml([...out, t(guessLang(msg.body), "wa.slow")]));
+    }
+    return xml(twiml(out));
   });
 }

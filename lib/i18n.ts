@@ -37,3 +37,10 @@ export function fmtDate(lang: Lang, iso: string | null | undefined) {
 }
 
 export const dict = (lang: Lang) => ({ ...TABLE.en, ...TABLE[lang] });
+
+/** A first guess at her language from the first message, before the intake model confirms it. */
+export function guessLang(text: string): Lang {
+  if (/[一-鿿]/.test(text)) return "zh";
+  if (/[ñáéíóú¿¡]|\b(hola|soy|maestra|tengo|vivo|estudi[eé]|años|carta)\b/i.test(text)) return "es";
+  return "en";
+}

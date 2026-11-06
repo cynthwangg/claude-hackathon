@@ -6,11 +6,11 @@ import type { Lang } from "@/rules/types";
 
 type Props = { id: string; lang: Lang; name: string | null; active?: string; routeKind?: string; mock?: boolean; children: React.ReactNode; wide?: boolean };
 
-const NAV_DEEP = ["position", "documents", "route", "week", "progress"] as const;
-const NAV_KEYS: Record<string, string> = { position: "nav.where", documents: "nav.documents", route: "nav.route", week: "nav.week", progress: "nav.progress", change: "nav.change" };
+const NAV_DEEP = ["position", "documents", "route", "week", "progress", "ask"] as const;
+const NAV_KEYS: Record<string, string> = { position: "nav.where", documents: "nav.documents", route: "nav.route", week: "nav.week", progress: "nav.progress", ask: "nav.ask", change: "nav.change" };
 
 export function Shell({ id, lang, name, active, routeKind, mock, children, wide }: Props) {
-  const items = routeKind === "none" ? (["position", "documents"] as const) : NAV_DEEP;
+  const items = routeKind === "none" ? (["position", "documents", "ask"] as const) : NAV_DEEP;
   return (
     <div lang={lang}>
       <header className="top">
